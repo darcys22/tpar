@@ -1,0 +1,17 @@
+{
+  "name": "TPAR Creator 1",
+  "version": "0.1.1",
+  "homepage": "www.tpar.com.au",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "authors": [
+    "Sean Darcy <Darcys22@gmail.com>"
+  ],
+  "description": "Simple app to create tpar files",
+  "main": "index.html",
+  "keywords": [
+  ],
+  "license": "GPLv3"
+}

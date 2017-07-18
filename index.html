@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Simple TPAR file Creator</title>
+    <meta name="google-site-verification" content="NzgfVnm6XgoHCXizrLiv5AcvxkKs8KFr2TtRdho4emI" />
+    <meta name="description" content="Create TPAR files online for free with our simple web form" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=yes">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/footer.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/pikaday.css">
+    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico'/>
+  </head>
+  <body>
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">Tpar.com.au</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav navbar-right">
+						<li> <a href="" data-toggle="modal" data-target="#instructionsModal">Instructions</a> </li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-7">
+          <div class="page-header">
+            <h1>TPAR Creator</h1>
+            <h3 id="payername" ><small>Click Edit Payer Information to add payer information</small></h3>
+          </div>
+          <div class="row">
+            <button type="button" id="new" class="btn btn-success btn-lg" data-toggle="modal" data-target="#contractorModal">
+            Add Contractor
+            </button>
+            <button type="button" id="payer" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#payerModal">
+            Edit Payer Information
+            </button>
+            <button type="button" id="convert" class="btn btn-default btn-lg" data-toggle="tooltip" title="Please add a Contractor and Payer Details to Create File" disabled>
+            Validate
+            </button>
+            <!--</div>-->
+          </div>
+          <div class="help-block"></div>
+          <div class="row">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>TFN</th>
+                  <th>Gross Payments</th>
+                  <th>Tax Withheld</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="contractortable">
+                <tr>
+                  <th>No Contractors. Click "Add Contractor" to add some
+                  <th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-3"></div>
+      </div>
+      <div class="help-block"></div>
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-7">
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="payerModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4>Payer Identity Data Record</h4>
+          </div>
+          <div class = "modal-body">
+            <form class="well form-horizontal" data-toggle="validator" action=" " method="post" role="form" id="payer_form">
+              <fieldset>
+                <!-- Text input-->
+                <div class="form-group col-md-9">
+                  <label class="col-md-4 control-label">Payer Name</label>  
+                  <div class="col-md-8 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input  name="name" placeholder="Payer Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <div class="inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input  name="tradingName" onchange="formatCapitalize(this);" placeholder="Trading Name" class="form-control"  type="text" tabindex="-1">
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group col-md-9">
+                  <label class="col-md-4 control-label">ABN</label>  
+                  <div class="col-md-8 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                      <input name="ABN" placeholder="ABN" class="form-control" pattern="^(\d *?){11}$" onChange="formatabntfn(this)" ondblclick="this.select()" type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-2">
+                  <div class="inputGroupContainer">
+                    <div class="input-group">
+                      <input  name="ABNBranch" placeholder="001" class="form-control"  type="text" tabindex="-1">
+                    </div>
+                  </div>
+                  <div class="help-block"></div>
+                </div>
+                <hr>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Contact Name</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input name="contactName" placeholder="Contact Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Contact Number</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+                      <input name="number" placeholder="Contact Number" class="form-control" type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block"></div>
+                <hr>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Address</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="address" placeholder="Address" class="form-control" type="text" maxlength="38" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Address</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="address2" placeholder="Address" class="form-control" type="text" maxlength="38">
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Suburb/City</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="suburb" onchange="formatCapitalize(this);" placeholder="Suburb" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">State</label>
+                  <div class="col-md-7 selectContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                      <select name="state" class="form-control selectpicker" required>
+                        <option value=" " >Please select your state</option>
+                        <option>NSW</option>
+                        <option>VIC</option>
+                        <option >QLD</option>
+                        <option >ACT</option>
+                        <option >TAS</option>
+                        <option >SA</option>
+                        <option >WA</option>
+                        <option >NT</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Postcode</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="postcode" placeholder="Postcode" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block"></div>
+                <hr>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Financial Year</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                      <input id="fybox" name="financialYear" placeholder="CCYY" class="form-control" pattern="^\d{4}$" type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block with-errors"></div>
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-10 control-label"></label>
+                  <div class="col-md-2">
+                    <button type="submit" class="btn btn-warning" >Save <span class="glyphicon glyphicon-user"></span></button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="contractorModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4>Individual Non-Business Payment Summary Data Record</h4>
+          </div>
+          <div class = "modal-body">
+            <form class="well form-horizontal" role="form" data-toggle="validator" action=" " method="post"  id="addContractor">
+              <fieldset>
+                <!-- Form Name -->
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Given Names</label>  
+                  <div class="col-md-4 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input  name="name" onchange="formatCapitalize(this);" placeholder="First Name" class="form-control"  type="text">
+                    </div>
+                  </div>
+                  <div class="col-md-3 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input name="secondName" onchange="formatCapitalize(this);" placeholder="Second Name" class="form-control"  type="text" tabindex="-1">
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label" >Surname</label> 
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input name="surname" placeholder="Last Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Tax File Number</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+                      <input name="TFN" placeholder="TFN" class="form-control" pattern="^(\d *?){9}$" onChange="formatabntfn(this)" ondblclick="this.select()"type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Date of Birth</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                      <input name="DOB" id="dobbox" placeholder="DDMMCCYY" class="form-control" type="text" onchange="formatdate(this)" onClick="this.select()" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block"></div>
+                <hr>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Address</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="address" placeholder="Address" class="form-control" type="text" maxlength="38" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Address</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="address2" placeholder="Address" class="form-control" type="text" maxlength="38">
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Suburb/City</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="suburb" placeholder="Suburb" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- Select Basic -->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">State</label>
+                  <div class="col-md-7 selectContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                      <select name="state" class="form-control selectpicker" required>
+                        <option value=" " >Please select your state</option>
+                        <option>NSW</option>
+                        <option>VIC</option>
+                        <option >QLD</option>
+                        <option >ACT</option>
+                        <option >TAS</option>
+                        <option >SA</option>
+                        <option >WA</option>
+                        <option >NT</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Postcode</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-home"></i></span>
+                      <input name="postcode" placeholder="Postcode" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block"></div>
+                <hr>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Period of payment start date</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                      <input name="periodStart" id="startbox" placeholder="DDMMCCYY" class="form-control" onchange="formatdate(this)" onClick="this.select()" type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Period of payment end date</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                      <input name="periodEnd" id="endbox" placeholder="DDMMCCYY" class="form-control" onchange="formatdate(this)" onClick="this.select()" type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Total Tax Withheld</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="taxWithheld" value="0" class="form-control" type="number" min="0" step="1" onClick="this.select()" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Gross Payments</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="grossPayments" placeholder="Dollars" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Total Allowances</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="allowances" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Lump Sum Payment A</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="lumpsumA" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Lump Sum Payment B</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="lumpsumB" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Lump Sum Payment D</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="lumpsumD" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Lump Sum Payment E</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="lumpsumE" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Reportable Fringe Benefits</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="fb" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                      <div class="input-group-btn">
+                        <button type="button" id="exemptfbt" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">N<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropDownListItem" data-name="E" href="#">Exempt</a></li>
+                          <li><a class="dropDownListItem" data-name="N" href="#">Non-Exempt</a></li>
+                        </ul>
+                      </div>
+                      <!-- /btn-group -->
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Super Contributions</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="superSGC" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="help-block with-errors"></div>
+                <!-- Button -->
+                <div class="form-group">
+                  <label class="col-md-10 control-label"></label>
+                  <div class="col-md-2">
+                    <button type="submit" class="btn btn-warning" >Add <span class="glyphicon glyphicon-user"></span></button>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="validateModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4>Validating Form Inputs</h4>
+          </div>
+          <div class = "modal-body">
+            <style type="text/css">
+              samp {
+              background: #000;
+              border: 3px groove #ccc;
+              color: #ccc;
+              display: block;
+              padding: 5px;
+              }
+            </style>
+            <samp id="console"> </samp>
+            <!-- Button -->
+            <div class="row">
+              <label class="col-md-5 control-label"></label>
+              <div class="col-md-3">
+                <!--<button class="btn btn-default" id="pdfbutton" onclick="" >Create Payment Summary PDF</button>-->
+              </div>
+              <div class="col-md-1">
+              </div>
+              <div class="col-md-3">
+                <button class="btn btn-primary" id="createbutton" onclick="" >Create TPAR File <span class="glyphicon glyphicon-user"></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog" aria-labelledby="instructions modal">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h2>How to Use TPAR Maker</h2>
+          </div>
+          <div class = "modal-body">
+            <h4><em>What does it do</em></h4>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/en-au.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.10.0/validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <script src="js/pikaday.js"></script>
+    <script type="text/javascript" src="js/main.js"></script> 
+  </body>
+  <div id="footer">
+    <p class="darcy">
+      TPAR File Creator
+      <br>
+      <a href="" data-toggle="modal" data-target="#instructionsModal">Instructions</a>
+    </p>
+    <p class="copyright">
+      Copyright © 2017
+      <a rel="author" href="http://www.darcyfinancial.com" target="_blank"><strong>Sean Darcy</strong></a>
+      <br>
+      Email:
+      <a href="mailto:darcys22@gmail.com">Darcys22@gmail.com</a>
+    </p>
+  </div>
+</html>
+
+
