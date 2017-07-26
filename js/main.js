@@ -37,7 +37,7 @@ function editPayer() {
 }
 function openvalidate() {
   var validatebutton = document.getElementById('convert');
-  if (window.employees.length > 0 && !jQuery.isEmptyObject(window.payer)) {
+  if (window.contractors.length > 0 && !jQuery.isEmptyObject(window.payer)) {
     validatebutton.title = "Validate before creating TPAR File"
     validatebutton.disabled = false
     validatebutton.onclick = function() {validateTPAR()};
@@ -49,8 +49,8 @@ function openvalidate() {
 }
 function editContractor(index) {
   var contractor = window.contractors[index];
-  deleteEmployee(index) 
-  for (var key in employee) {
+  deleteContractor(index) 
+  for (var key in contractor) {
     try {
       document.getElementById("addContractor").elements[key].value = contractor[key]
     } catch(err){
@@ -117,7 +117,7 @@ function validateTPAR() {
 	};
 
   validate.validators.taxamount = function(payments, options, key, attributes) {
-    if (window.employees[options].taxWithheld > (window.employees[options].grossPayments + window.employees[options].allowances + window.employees[options].lumpSumA + (window.employees[options].lumpSumB * 0.05) + window.employees[options].lumpSumE)) {
+    if (window.contractors[options].taxWithheld > (window.contractors[options].grossPayments + window.contractors[options].allowances + window.contractors[options].lumpSumA + (window.contractors[options].lumpSumB * 0.05) + window.contractors[options].lumpSumE)) {
       return "The Total tax withheld field is greater than the sum of Gross payments field + Total allowances field + Lump sum payment A field + 5% of the Lump sum payment B field + Lump sum payment E field + Community Development Employment Projects payments field.";
     }
     return null;
@@ -193,7 +193,7 @@ function validateTPAR() {
         message: "can only contain a-z and 0-9"
       }
     },
-    number: {
+    contactNumber: {
       presence: true,
       length: {
         minimum: 3,
@@ -457,7 +457,7 @@ function validateTPAR() {
         p.appendChild(br);
         p.appendChild(content);
         for (var j in window.contractorErrors[i][property]) {
-          var content = document.createTextNode(window.employeeErrors[i][property][j]);
+          var content = document.createTextNode(window.contractorErrors[i][property][j]);
           var br = document.createElement("br");
           p.appendChild(br);
           p.appendChild(content);
@@ -511,42 +511,42 @@ function createTPAR() {
   addSupplierDataRecords();
   addPayerIdentityDataRecord();
   addSoftwareDataRecord();
-  for (var i = 0; i < window.employees.length; i++) {
+  for (var i = 0; i < window.contractors.length; i++) {
     addPayeeDataRecord(i);
   }
   addFileTotalRecord();
-  download("TPAR", window.empdupe);
+  download("TPAR", window.TPAR);
 }
 
 function addSupplierDataRecords() {
   //record length and identifier
-  window.empdupe += "628IDENTREGISTER1"
+  window.TPAR += "996IDENTREGISTER1"
   //ABN
-  window.empdupe += window.payer.ABN
+  window.TPAR += window.payer.ABN
   //Run Type P = Production, T = Test
-  window.empdupe += "P"
+  window.TPAR += "P"
   // ReportEndDate
-  window.empdupe += window.payer.endDate
+  window.TPAR += window.payer.endDate
   //Data Type payg withholding summaries must be E, Type of report must be A, format of report must be P
-  window.empdupe += "EAP"
+  window.TPAR += "PCM"
   //Report specification number
-  window.empdupe += "FEMPA012.0"
+  window.TPAR += "FPAIVV02.0"
   //Filler
-  catAlphanumeric(578, " ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(946, " ");
+  window.TPAR += "\r\n";
   //record length and identifier
-  window.empdupe += "628IDENTREGISTER2"
+  window.TPAR += "996IDENTREGISTER2"
   //SupplierName
   catAlphanumeric(200, window.payer.name);
   //Supplier Contact Name
   catAlphanumeric(38, window.payer.contactName);
   //Supplier Number
-  catAlphanumeric(15, window.payer.number);
+  catAlphanumeric(15, window.payer.contactNumber);
   //Filler
-  catAlphanumeric(15 + 16 + 327, " ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(15 + 16 + 695, " ");
+  window.TPAR += "\r\n";
   //record length and identifier
-  window.empdupe += "628IDENTREGISTER3"
+  window.TPAR += "996IDENTREGISTER3"
   //Supplier street address
   catAlphanumeric(38,window.payer.address);
   catAlphanumeric(38,window.payer.address2);
@@ -565,16 +565,16 @@ function addSupplierDataRecords() {
   //Supplier email
   catAlphanumeric(76, "  ");
   //Filler
-  catAlphanumeric(275, "  ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(643, "  ");
+  window.TPAR += "\r\n";
 
 }
 
 function addPayerIdentityDataRecord() {
   //record length and identifier
-  window.empdupe += "628IDENTITY"
+  window.TPAR += "996IDENTITY"
   //ABN
-  window.empdupe += window.payer.ABN
+  window.TPAR += window.payer.ABN
   //ABN Branch Number
   catNumeric(3,window.payer.ABNBranch);
   //Financial Year
@@ -597,116 +597,116 @@ function addPayerIdentityDataRecord() {
   //Payer Contact Name
   catAlphanumeric(38, window.payer.contactName);
   //Supplier Number
-  catAlphanumeric(15, window.payer.number);
+  catAlphanumeric(15, window.payer.contactNumber);
   //Filler
-  catAlphanumeric(15 + 1, "  ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(15 + 76 + 293, "  ");
+  window.TPAR += "\r\n";
 }
 
 
 function addSoftwareDataRecord() {
   //record length and identifier
-  window.empdupe += "628SOFTWARE"
+  window.TPAR += "996SOFTWARE"
   //Software product Type
-  catAlphanumeric(80, "COMMERCIAL Sean Darcy DarcyFinancial www.empdupe.com.au EmpdupeCreator 1");
-  //ECI tested
-  window.empdupe += "Y"
+  catAlphanumeric(80, "COMMERCIAL Sean Darcy DarcyFinancial www.taxablepayments.com.au TPARCreator 1");
   //Filler
-  catAlphanumeric(536, "  ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(905, "  ");
+  window.TPAR += "\r\n";
 }
 
-function addPaymentSummaryDataRecord(arrayPosition) {
+function addPayeeDataRecord(arrayPosition) {
   //record length and identifier and Income type S for salary
-  window.empdupe += "628DINBS"
+  window.TPAR += "996DPAIVS"
   //TFN
-  catNumeric(9,window.employees[arrayPosition].TFN);
-  //DOB Year
-  catDate(window.employees[arrayPosition].DOB);
-  //Employee Surname
-  catAlphanumeric(30, window.employees[arrayPosition].surname);
-  //Employee Name
-  catAlphanumeric(15, window.employees[arrayPosition].name);
-  //Employee Second Name
-  catAlphanumeric(15, window.employees[arrayPosition].secondName);
-  //Employee street address
-  catAlphanumeric(38, window.employees[arrayPosition].address);
-  catAlphanumeric(38, window.employees[arrayPosition].address2);
-  //Employee suburb
-  catAlphanumeric(27, window.employees[arrayPosition].suburb);
-  //Employee state
-  catAlphanumeric(3, window.employees[arrayPosition].state);
-  //Employee postcode
-  catNumeric(4, window.employees[arrayPosition].postcode);
-  //Payer country (blank for Aus) 
+  catNumeric(11,window.contractors[arrayPosition].abn);
+  //Payee Surname
+  catAlphanumeric(30, window.contractors[arrayPosition].surname);
+  //Payee Name
+  catAlphanumeric(15, window.contractors[arrayPosition].name);
+  //Payee Second Name
+  catAlphanumeric(15, window.contractors[arrayPosition].secondName);
+  //Payee Name
+  catAlphanumeric(200, window.contractors[arrayPosition].businessName);
+  //Payee Trading Name
+  catAlphanumeric(200, window.contractors[arrayPosition].tradingName);
+  //Payee street address
+  catAlphanumeric(38, window.contractors[arrayPosition].address);
+  catAlphanumeric(38, window.contractors[arrayPosition].address2);
+  //Payee suburb
+  catAlphanumeric(27, window.contractors[arrayPosition].suburb);
+  //Payee state
+  catAlphanumeric(3, window.contractors[arrayPosition].state);
+  //Payee postcode
+  catNumeric(4, window.contractors[arrayPosition].postcode);
+  //Payee country (blank for Aus) 
   catAlphanumeric(20, "  ");
   //Period Start
-  catDate(window.employees[arrayPosition].periodStart);
+  catDate(window.contractors[arrayPosition].periodStart);
   //Period End
-  catDate(window.employees[arrayPosition].periodEnd);
+  catDate(window.contractors[arrayPosition].periodEnd);
   //Tax Withheld
-  catNumeric(8, window.employees[arrayPosition].taxWithheld);
+  catNumeric(8, window.contractors[arrayPosition].taxWithheld);
   //Gross Payments
-  catNumeric(8, window.employees[arrayPosition].grossPayments);
+  catNumeric(8, window.contractors[arrayPosition].grossPayments);
   //Total Allowances
-  catNumeric(8, window.employees[arrayPosition].allowances);
+  catNumeric(8, window.contractors[arrayPosition].allowances);
   //Lumpsum A
-  catNumeric(8, window.employees[arrayPosition].lumpsumA);
+  catNumeric(8, window.contractors[arrayPosition].lumpsumA);
   //Lumpsum B
-  catNumeric(8, window.employees[arrayPosition].lumpsumB);
+  catNumeric(8, window.contractors[arrayPosition].lumpsumB);
   //Lumpsum D
-  catNumeric(8, window.employees[arrayPosition].lumpsumD);
+  catNumeric(8, window.contractors[arrayPosition].lumpsumD);
   //Lumpsum E
-  catNumeric(8, window.employees[arrayPosition].lumpsumE);
+  catNumeric(8, window.contractors[arrayPosition].lumpsumE);
   //Community Development Employment Project
   catNumeric(8, 0);
   //Filler
   catNumeric(8, 0);
   //Reportable Fringe benefit
-  catNumeric(8, window.employees[arrayPosition].fb);
+  catNumeric(8, window.contractors[arrayPosition].fb);
   //Amendment Indicator
-  window.empdupe += "O"
+  window.TPAR += "O"
   //Reportable Employer Superannuation Contributions
-  catNumeric(8, window.employees[arrayPosition].superSGC);
+  catNumeric(8, window.contractors[arrayPosition].superSGC);
   //Lump Sum A type
-  catAlphanumeric(1, window.employees[arrayPosition].lumpsumAtype);
+  catAlphanumeric(1, window.contractors[arrayPosition].lumpsumAtype);
   //Workplace Giving
-  catNumeric(8, window.employees[arrayPosition].workplaceGiving);
+  catNumeric(8, window.contractors[arrayPosition].workplaceGiving);
   //Union Fees
-  catNumeric(8, window.employees[arrayPosition].union);
+  catNumeric(8, window.contractors[arrayPosition].union);
   //Exempt foreign employment income
-  catNumeric(8, window.employees[arrayPosition].foreign);
+  catNumeric(8, window.contractors[arrayPosition].foreign);
   //Annuity Return of Capital
-  catNumeric(8, window.employees[arrayPosition].annuity);
+  catNumeric(8, window.contractors[arrayPosition].annuity);
   //FBT Exemption
-  catAlphanumeric(1, window.employees[arrayPosition].fbtExempt);
+  catAlphanumeric(1, window.contractors[arrayPosition].fbtExempt);
   //Filler
   catAlphanumeric(274, "  ");
-  window.empdupe += "\r\n";
+  window.TPAR += "\r\n";
 }
 
 function addFileTotalRecord() {
   //record length and identifier
-  window.empdupe += "628FILE-TOTAL"
+  window.TPAR += "996FILE-TOTAL"
   //Annuity Return of Capital
-  catNumeric(8, window.employees.length + 6);
+  catNumeric(8, window.contractors.length + 6);
   //Filler
-  catAlphanumeric(607, "  ");
-  window.empdupe += "\r\n";
+  catAlphanumeric(975, "  ");
+  window.TPAR += "\r\n";
 }
 function catxAlphanumeric(length, text) {
-  window.empdupe += padding_right(text, "x", length)
+  window.TPAR += padding_right(text, "x", length)
 }
 
 function catAlphanumeric(length, text) {
-  window.empdupe += padding_right(text, " ", length)
+  window.TPAR += padding_right(text, " ", length)
 }
 function catDate(date) {
-  window.empdupe += moment(date,["Do MMMM YYYY","DDMMYYYY"]).format('DDMMYYYY');
+  window.TPAR += moment(date,["Do MMMM YYYY","DDMMYYYY"]).format('DDMMYYYY');
 }
 function catNumeric(length, num) {
   var n = String(num); 
-  window.empdupe += padding_left(n, "0", length)
+  window.TPAR += padding_left(n, "0", length)
 }
 // left padding s with c to a total of n chars
 function padding_left(s, c, n) {
@@ -779,27 +779,27 @@ function moneyNumber(x) {
 }
 
 function tableCreate() {
-    var tbdy = document.getElementById('employeetable');
+    var tbdy = document.getElementById('contractortable');
     tbdy.innerHTML = '';
-    for (var i = 0; i < window.employees.length; i++) {
+    for (var i = 0; i < window.contractors.length; i++) {
         var tr = document.createElement('tr');
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode(window.employees[i].name +  ' ' +window.employees[i].surname))
+        td.appendChild(document.createTextNode(window.contractors[i].name +  ' ' +window.contractors[i].surname))
         tr.appendChild(td)
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode(window.employees[i].TFN))
+        td.appendChild(document.createTextNode(window.contractors[i].TFN))
         tr.appendChild(td)
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode("$" + moneyNumber(window.employees[i].grossPayments)));
+        td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].grossPayments)));
         tr.appendChild(td)
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode("$" + moneyNumber(window.employees[i].taxWithheld)));
+        td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].taxWithheld)));
         tr.appendChild(td)
         var td = document.createElement('td');
         var btn = document.createElement('button');
         btn.className = 'btn btn-warning';
         btn.setAttribute('data-param', i);
-        btn.onclick = function () {editEmployee(this.getAttribute('data-param'));}; 
+        btn.onclick = function () {editContractor(this.getAttribute('data-param'));}; 
         btn.innerHTML = "Edit";
         td.appendChild(btn)
         tr.appendChild(td)
@@ -807,7 +807,7 @@ function tableCreate() {
         var btn = document.createElement('button');
         btn.className = 'btn btn-danger';
         btn.setAttribute('data-param', i);
-        btn.onclick = function () {deleteEmployee(this.getAttribute('data-param'));}; 
+        btn.onclick = function () {deleteContractor(this.getAttribute('data-param'));}; 
         btn.innerHTML = "Delete";
         td.appendChild(btn)
         tr.appendChild(td)
@@ -868,30 +868,30 @@ function makePDF() {
   background.src = 'background.jpg';
   window.doc = new jsPDF()
   background.onload = function() {
-    for(var i = 0; i < window.employees.length; i++) {
+    for(var i = 0; i < window.contractors.length; i++) {
       if(i > 0) window.doc.addPage();
       window.doc.addImage(background, 'JPEG', 0, 0,210,297);
       window.doc.setFontSize(10)
-      rightText(moneyNumber(window.employees[i].taxWithheld), 185, 99)
-      rightText(moneyNumber(window.employees[i].lumpsumA), 175, 115)
-      window.doc.text(188, 115, window.employees[i].lumpsumAtype);
-      rightText(moneyNumber(window.employees[i].lumpsumB), 175, 125)
-      rightText(moneyNumber(window.employees[i].lumpsumD), 175, 135)
-      rightText(moneyNumber(window.employees[i].lumpsumE), 175, 145)
-      rightText(moneyNumber(window.employees[i].grossPayments), 109, 115)
+      rightText(moneyNumber(window.contractors[i].taxWithheld), 185, 99)
+      rightText(moneyNumber(window.contractors[i].lumpsumA), 175, 115)
+      window.doc.text(188, 115, window.contractors[i].lumpsumAtype);
+      rightText(moneyNumber(window.contractors[i].lumpsumB), 175, 125)
+      rightText(moneyNumber(window.contractors[i].lumpsumD), 175, 135)
+      rightText(moneyNumber(window.contractors[i].lumpsumE), 175, 145)
+      rightText(moneyNumber(window.contractors[i].grossPayments), 109, 115)
       rightText("0", 109, 125)
-      rightText(moneyNumber(window.employees[i].fb), 109, 135)
-      rightText(moneyNumber(window.employees[i].superSGC), 109, 145)
-      rightText(moneyNumber(window.employees[i].allowances), 109, 155)
+      rightText(moneyNumber(window.contractors[i].fb), 109, 135)
+      rightText(moneyNumber(window.contractors[i].superSGC), 109, 145)
+      rightText(moneyNumber(window.contractors[i].allowances), 109, 155)
       window.doc.text(61, 27, 'Payment summary for the year ended 30 June ' + window.payer.financialYear);
-      var arr = [ window.employees[i].name + " " + window.employees[i].surname, window.employees[i].address, window.employees[i].suburb, window.employees[i].state + ' ' + window.employees[i].postcode];
-      if (window.employees[i].address2.length > 0 && window.employees[i].address2.trim()) {
-        arr.splice(2, 0, window.employees[i].address2);
+      var arr = [ window.contractors[i].name + " " + window.contractors[i].surname, window.contractors[i].address, window.contractors[i].suburb, window.contractors[i].state + ' ' + window.contractors[i].postcode];
+      if (window.contractors[i].address2.length > 0 && window.contractors[i].address2.trim()) {
+        arr.splice(2, 0, window.contractors[i].address2);
       }
       window.doc.text(25, 48, arr);
-      window.doc.text(84, 88,window.employees[i].periodStart);
-      window.doc.text(133, 88,window.employees[i].periodEnd);
-      window.doc.text(56, 100,(formatcomma(window.employees[i].TFN)));
+      window.doc.text(84, 88,window.contractors[i].periodStart);
+      window.doc.text(133, 88,window.contractors[i].periodEnd);
+      window.doc.text(56, 100,(formatcomma(window.contractors[i].TFN)));
       window.doc.text(81, 261, (formatcomma(window.payer.ABN)));
       window.doc.text(160, 261, window.payer.ABNBranch);
       window.doc.text(40, 268, window.payer.name);
@@ -909,9 +909,8 @@ var rightText = function(text, x, y) {
 }
 
 function main() {
-  window.employees = [];
+  window.contractors = [];
   window.payer = {};
-  window.excluded = "N"
   window.now = moment();
   if (window.now.month() < 6) {
     window.now.set('year', now.year() -1);
