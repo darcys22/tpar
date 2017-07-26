@@ -3,17 +3,13 @@ $('#addContractor').validator().on('submit', function (e) {
     // handle the invalid form...
   } else {
     e.preventDefault();
-		window.employees.push($('#addContractor').serializeObject());
+		window.contractors.push($('#addContractor').serializeObject());
 		$('#addContractor')[0].reset();
     window.startpicker.setMoment(window.startFY);
     window.endpicker.setMoment(window.endFY);
 		$("#fybox").val(window.endFY.format("YYYY"));
 		tableCreate();
     $('#contractorModal').modal('toggle');
-    window.employees[window.employees.length - 1].fbtExempt = window.excluded;
-    var element = document.getElementById('exemptfbt');
-    element.innerHTML = "N<span class='caret'></span>"
-    window.excluded = "N"
     openvalidate();
   }
 })
@@ -273,41 +269,21 @@ function validateTPAR() {
   };
   var payerErrors = validate(window.payer, payerConstraints)
 
-  empnumb = ['TFN','taxWithheld','grossPayments',
-    'allowances',
-    'lumpsumA',
-    'lumpsumB',
-    'lumpsumD',
-    'lumpsumE',
-    'fb',
-    'superSGC',
+  contractornumb = ['abn','grossPayments','taxWithheld','gst',
     ]
   
 
   var contractorConstraints = {
-    TFN: {
+    abn: {
       presence: true,
-			tfn: true,
+			abn: true,
       length: {
-        minimum: 9,
-        maximum: 9
+        minimum: 11,
       },
       format: {
         pattern: "[0-9]+",
         message: "can only contain 0-9"
       }
-    },
-    DOB: {
-      presence: true,
-      customdate: true
-    },
-    periodStart: {
-      presence: true,
-      customdate: true
-    },
-    periodEnd: {
-      presence: true,
-      customdate: true
     },
     taxWithheld: {
       format: {
@@ -319,68 +295,12 @@ function validateTPAR() {
         pattern: "^[0-9]{0,8}$"
       }
     },
-    allowances: {
+    gst: {
       format: {
         pattern: "^[0-9]{0,8}$"
-      }
-    },
-    lumpsumA: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    lumpsumB: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    lumpsumD: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    lumpsumE: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    fb: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    superSGC: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    workplaceGiving: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    union: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    foreign: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    annuity: {
-      format: {
-        pattern: "^[0-9]{0,8}$"
-      }
-    },
-    fbtExempt: {
-      format: {
-        pattern: "^[Y,N]{1}$"
       }
     },
     name: {
-      presence: true,
       length: {
         minimum: 3,
         maximum: 200
@@ -403,7 +323,6 @@ function validateTPAR() {
       }
     },
     surname: {
-      presence: true,
       length: {
         minimum: 3,
         maximum: 38
@@ -479,18 +398,10 @@ function validateTPAR() {
            window.contractors[i][key] = window.contractors[i][key].trim(); 
     }
 
-    window.employees[i].lumpsumAtype = "T";
-    if (window.employees[i].fb == 0) window.employees[i].fbtExempt = "";
-    if (window.employees[i].lumpsumA == 0) window.employees[i].lumpsumAtype = "";
-
-    window.employees[i].workplaceGiving = "0";
-    window.employees[i].union = "0";
-    window.employees[i].foreign = "0";
-    window.employees[i].annuity = "0";
-    var errors = validate(window.employees[i], employeeConstraints);
+    var errors = validate(window.contractors[i], contractorConstraints);
     if (errors) {
-      window.employeeErrors.push(errors)
-      window.errorNames.push(window.employees[i].surname + ', ' + window.employees[i].name);
+      window.contractorErrors.push(errors)
+      window.errorNames.push(window.contractors[i].abn);
     }
   }
 
@@ -527,25 +438,25 @@ function validateTPAR() {
     p.appendChild(br);
     div.appendChild(p);
   }
-  if(window.employeeErrors.length > 0) {
+  if(window.contractorErrors.length > 0) {
     window.valid = false;
     var p = document.createElement("p")                
     p.style.color = "red";
-    var content = document.createTextNode("---ERRORS WITH EMPLOYEE DATA ---");
+    var content = document.createTextNode("---ERRORS WITH CONTRACTOR DATA ---");
     var br = document.createElement("br");
     p.appendChild(br);
     p.appendChild(content);
-    for (var i in window.employeeErrors) {
-      var content = document.createTextNode("---EMPLOYEE: " + window.errorNames[i] + " ---");
+    for (var i in window.contractorErrors) {
+      var content = document.createTextNode("---CONTRACTOR: " + window.errorNames[i] + " ---");
       var br = document.createElement("br");
       p.appendChild(br);
       p.appendChild(content);
-      for (var property in window.employeeErrors[i]) {
+      for (var property in window.contractorErrors[i]) {
         var content = document.createTextNode(property + ":");
         var br = document.createElement("br");
         p.appendChild(br);
         p.appendChild(content);
-        for (var j in window.employeeErrors[i][property]) {
+        for (var j in window.contractorErrors[i][property]) {
           var content = document.createTextNode(window.employeeErrors[i][property][j]);
           var br = document.createElement("br");
           p.appendChild(br);
@@ -557,7 +468,7 @@ function validateTPAR() {
   } else {
     var p = document.createElement("p")                
     p.style.color = "green";
-    var content = document.createTextNode("---EMPLOYEE DATA VALID---");
+    var content = document.createTextNode("---CONTRACTOR DATA VALID---");
     var br = document.createElement("br");
     p.appendChild(br);
     p.appendChild(content);
@@ -595,16 +506,16 @@ function download(filename, text) {
   document.body.removeChild(element);
 }
 
-function createEmpdupe() {
-  window.empdupe = "";
+function createTPAR() {
+  window.TPAR = "";
   addSupplierDataRecords();
   addPayerIdentityDataRecord();
   addSoftwareDataRecord();
   for (var i = 0; i < window.employees.length; i++) {
-    addPaymentSummaryDataRecord(i);
+    addPayeeDataRecord(i);
   }
   addFileTotalRecord();
-  download("empdupe", window.empdupe);
+  download("TPAR", window.empdupe);
 }
 
 function addSupplierDataRecords() {
@@ -916,16 +827,6 @@ function formatdate(element) {
 }
 
 function initdates() {
-  var dobpicker = new Pikaday(
-    {
-        field: document.getElementById('dobbox'),
-        firstDay: 1,
-        maxDate: new Date(),
-        onSelect: function() {
-            var date = this.getMoment().format('Do MMMM YYYY');
-            document.getElementById('dobbox').value = date;
-        }
-    });
   window.startpicker = new Pikaday(
     {
         field: document.getElementById('startbox'),

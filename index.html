@@ -19,7 +19,7 @@
 			<div class="container">
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">Tpar.com.au</a>
+					<a class="navbar-brand" href="#">TPAR.com.au</a>
 				</div>
 
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -56,7 +56,7 @@
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>TFN</th>
+                  <th>ABN</th>
                   <th>Gross Payments</th>
                   <th>Tax Withheld</th>
                   <th></th>
@@ -238,12 +238,31 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4>Individual Non-Business Payment Summary Data Record</h4>
+            <h4>Payee Data Record</h4>
           </div>
           <div class = "modal-body">
             <form class="well form-horizontal" role="form" data-toggle="validator" action=" " method="post"  id="addContractor">
               <fieldset>
                 <!-- Form Name -->
+                <!-- Text input-->
+                <div class="form-group col-md-9">
+                  <label class="col-md-4 control-label">Business Name</label>  
+                  <div class="col-md-8 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input  name="name" placeholder="Payer Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <div class="inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                      <input  name="tradingName" onchange="formatCapitalize(this);" placeholder="Trading Name" class="form-control"  type="text" tabindex="-1">
+                    </div>
+                  </div>
+                </div>
+                <br>
                 <!-- Text input-->
                 <div class="form-group">
                   <label class="col-md-3 control-label">Given Names</label>  
@@ -266,30 +285,20 @@
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                      <input name="surname" placeholder="Last Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                      <input name="surname" placeholder="Last Name" onchange="formatCapitalize(this);" class="form-control"  type="text">
                     </div>
                   </div>
                 </div>
                 <!-- Text input-->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Tax File Number</label>  
+                  <label class="col-md-3 control-label">ABN</label>  
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
-                      <input name="TFN" placeholder="TFN" class="form-control" pattern="^(\d *?){9}$" onChange="formatabntfn(this)" ondblclick="this.select()"type="text" required>
+                      <input name="abn" placeholder="ABN" class="form-control" pattern="^(\d *?){9}$" onChange="formatabntfn(this)" ondblclick="this.select()"type="text" required>
                     </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Date of Birth</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                      <input name="DOB" id="dobbox" placeholder="DDMMCCYY" class="form-control" type="text" onchange="formatdate(this)" onClick="this.select()" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="help-block"></div>
                 <hr>
                 <!-- Text input-->
                 <div class="form-group">
@@ -354,27 +363,6 @@
                 <hr>
                 <!-- Text input-->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Period of payment start date</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                      <input name="periodStart" id="startbox" placeholder="DDMMCCYY" class="form-control" onchange="formatdate(this)" onClick="this.select()" type="text" required>
-                    </div>
-                  </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Period of payment end date</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                      <input name="periodEnd" id="endbox" placeholder="DDMMCCYY" class="form-control" onchange="formatdate(this)" onClick="this.select()" type="text" required>
-                    </div>
-                  </div>
-                </div>
-                <hr>
-                <!-- Text input-->
-                <div class="form-group">
                   <label class="col-md-3 control-label">Total Tax Withheld</label>  
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
@@ -397,85 +385,39 @@
                 </div>
                 <!-- Text input-->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Total Allowances</label>  
+                  <label class="col-md-3 control-label">GST</label>  
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="allowances" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <input name="gst" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
                       <span class="input-group-addon">.00</span>
                     </div>
                   </div>
                 </div>
-                <!-- Text input-->
+                <hr>
+                <!-- Select Basic -->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Lump Sum Payment A</label>  
-                  <div class="col-md-7 inputGroupContainer">
+                  <label class="col-md-3 control-label">Statement by a Supplier</label>
+                  <div class="col-md-7 selectContainer">
                     <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="lumpsumA" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                      <select name="amendment" class="form-control selectpicker" required>
+                        <option value="Y">Statement by a supplier has been provided</option>
+                        <option value="N">Statement by a supplier has not been provided</option>
+                      </select>
                     </div>
                   </div>
                 </div>
-                <!-- Text input-->
+                <!-- Select Basic -->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Lump Sum Payment B</label>  
-                  <div class="col-md-7 inputGroupContainer">
+                  <label class="col-md-3 control-label">Amendment Indicator</label>
+                  <div class="col-md-7 selectContainer">
                     <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="lumpsumB" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Lump Sum Payment D</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="lumpsumD" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Lump Sum Payment E</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="lumpsumE" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Reportable Fringe Benefits</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="fb" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
-                      <div class="input-group-btn">
-                        <button type="button" id="exemptfbt" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">N<span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                          <li><a class="dropDownListItem" data-name="E" href="#">Exempt</a></li>
-                          <li><a class="dropDownListItem" data-name="N" href="#">Non-Exempt</a></li>
-                        </ul>
-                      </div>
-                      <!-- /btn-group -->
-                    </div>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Super Contributions</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="superSGC" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
-                      <span class="input-group-addon">.00</span>
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
+                      <select name="amendment" class="form-control selectpicker" required>
+                        <option value="O">Original</option>
+                        <option value="A">Amended</option>
+                      </select>
                     </div>
                   </div>
                 </div>
