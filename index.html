@@ -141,7 +141,7 @@
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
-                      <input name="number" placeholder="Contact Number" class="form-control" type="text" required>
+                      <input name="contactNumber" placeholder="Contact Number" class="form-control" type="text" required>
                     </div>
                   </div>
                 </div>
@@ -250,7 +250,7 @@
                   <div class="col-md-8 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                      <input  name="name" placeholder="Payer Name" onchange="formatCapitalize(this);" class="form-control"  type="text" required>
+                      <input  name="name" placeholder="Payer Name" onchange="formatCapitalize(this);" class="form-control"  type="text">
                     </div>
                   </div>
                 </div>
@@ -295,7 +295,7 @@
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
-                      <input name="abn" placeholder="ABN" class="form-control" pattern="^(\d *?){9}$" onChange="formatabntfn(this)" ondblclick="this.select()"type="text" required>
+                      <input name="abn" placeholder="ABN"class="form-control" pattern="^(\d *?){11}$" onChange="formatabntfn(this)" ondblclick="this.select()"type="text" required>
                     </div>
                   </div>
                 </div>
@@ -395,19 +395,6 @@
                   </div>
                 </div>
                 <hr>
-                <!-- Select Basic -->
-                <div class="form-group">
-                  <label class="col-md-3 control-label">Statement by a Supplier</label>
-                  <div class="col-md-7 selectContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-list"></i></span>
-                      <select name="amendment" class="form-control selectpicker" required>
-                        <option value="Y">Statement by a supplier has been provided</option>
-                        <option value="N">Statement by a supplier has not been provided</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
                 <!-- Select Basic -->
                 <div class="form-group">
                   <label class="col-md-3 control-label">Amendment Indicator</label>

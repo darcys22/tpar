@@ -1,3 +1,4 @@
+
 $('#addContractor').validator().on('submit', function (e) {
   if (e.isDefaultPrevented()) {
     // handle the invalid form...
@@ -5,8 +6,6 @@ $('#addContractor').validator().on('submit', function (e) {
     e.preventDefault();
 		window.contractors.push($('#addContractor').serializeObject());
 		$('#addContractor')[0].reset();
-    window.startpicker.setMoment(window.startFY);
-    window.endpicker.setMoment(window.endFY);
 		$("#fybox").val(window.endFY.format("YYYY"));
 		tableCreate();
     $('#contractorModal').modal('toggle');
@@ -94,32 +93,33 @@ function validateTPAR() {
 
 
 	validate.validators.abn = function($abn, options, key, attributes) {
-    var weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+    return null;
+    //var weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
-    // strip anything other than digits
-    $abn = $abn.toString().replace("/[^\d]/","");
+    //// strip anything other than digits
+    //$abn = $abn.toString().replace("/[^\d]/","");
 
-    // check length is 11 digits
-    if ($abn.length==11) {
-        // apply ato check method 
-        var sum = 0;
-        weights.forEach(function(weight, position) {
-            var digit = $abn[position] - (position ? 0 : 1);
-            sum += weight * digit;
-        })
-				if((sum % 89)==0){
-					return null;
-				} else {
-					return "Invalid ABN"
-				}
-    } 
-		return "ABN Length Invalid";
+    //// check length is 11 digits
+    //if ($abn.length==11) {
+        //// apply ato check method 
+        //var sum = 0;
+        //weights.forEach(function(weight, position) {
+            //var digit = $abn[position] - (position ? 0 : 1);
+            //sum += weight * digit;
+        //})
+				//if((sum % 89)==0){
+					//return null;
+				//} else {
+					//return "Invalid ABN"
+				//}
+    //} 
+		//return "ABN Length Invalid";
 	};
 
-  validate.validators.taxamount = function(payments, options, key, attributes) {
-    if (window.contractors[options].taxWithheld > (window.contractors[options].grossPayments + window.contractors[options].allowances + window.contractors[options].lumpSumA + (window.contractors[options].lumpSumB * 0.05) + window.contractors[options].lumpSumE)) {
-      return "The Total tax withheld field is greater than the sum of Gross payments field + Total allowances field + Lump sum payment A field + 5% of the Lump sum payment B field + Lump sum payment E field + Community Development Employment Projects payments field.";
-    }
+  validate.validators.nameExists = function(payments, options, key, attributes) {
+    //if (window.contractors[options].taxWithheld > (window.contractors[options].grossPayments + window.contractors[options].allowances + window.contractors[options].lumpSumA + (window.contractors[options].lumpSumB * 0.05) + window.contractors[options].lumpSumE)) {
+      //return "The Total tax withheld field is greater than the sum of Gross payments field + Total allowances field + Lump sum payment A field + 5% of the Lump sum payment B field + Lump sum payment E field + Community Development Employment Projects payments field.";
+    //}
     return null;
   };
 
@@ -169,7 +169,7 @@ function validateTPAR() {
       presence: true,
       customdate: true
     },
-    name: {
+    businessName: {
       presence: true,
       length: {
         minimum: 3,
@@ -204,7 +204,7 @@ function validateTPAR() {
         message: "can only contain 0-9"
       }
     },
-    tradingname: {
+    tradingName: {
       length: {
         minimum: 3,
         maximum: 200
@@ -300,6 +300,28 @@ function validateTPAR() {
         pattern: "^[0-9]{0,8}$"
       }
     },
+    businessName: {
+      length: {
+        minimum: 3,
+        maximum: 200
+      },
+      format: {
+        pattern: "\[a-z0-9\x20]+$",
+        flags: "i",
+        message: "can only contain a-z and 0-9"
+      }
+    },
+    tradingName: {
+      length: {
+        minimum: 3,
+        maximum: 200
+      },
+      format: {
+        pattern: "\[a-z0-9\x20]+$",
+        flags: "i",
+        message: "can only contain a-z and 0-9"
+      }
+    },
     name: {
       length: {
         minimum: 3,
@@ -390,7 +412,7 @@ function validateTPAR() {
   window.errorNames = []
   for (var i in window.contractors) {
     for (var j in contractornumb) {
-      window.contractorss[i][contractornumb[j]] = stripwhitecommas(window.contractors[i][contractornumb[j]]);
+      window.contractors[i][contractornumb[j]] = stripwhitecommas(window.contractors[i][contractornumb[j]]);
     }
 
     for (var key in window.contractors[i]) {
@@ -479,17 +501,17 @@ function validateTPAR() {
 }
 function openfile() {
   var createbutton = document.getElementById('createbutton');
-  var pdfbutton = document.getElementById('pdfbutton');
+  //var reportbutton = document.getElementById('pdfbutton');
   if (window.valid) {
     createbutton.disabled = false
-    createbutton.onclick = function() {createEmpdupe()};
-    pdfbutton.disabled = false
-    pdfbutton.onclick = function() {makePDF()};
+    createbutton.onclick = function() {createTPAR()};
+    //reportbutton.disabled = false
+    //reportbutton.onclick = function() {makePDF()};
   } else {
     createbutton.disabled = true
     createbutton.onclick = function(){};
-    pdfbutton.disabled = true
-    pdfbutton.onclick = function(){};
+    //reportbutton.disabled = true
+    //reportbutton.onclick = function(){};
   }
 }
 
@@ -784,10 +806,11 @@ function tableCreate() {
     for (var i = 0; i < window.contractors.length; i++) {
         var tr = document.createElement('tr');
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode(window.contractors[i].name +  ' ' +window.contractors[i].surname))
+        var name = window.contractors[i].tradingName || window.contractors[i].businessName || window.contractors[i].name + ' ' + window.contractors[i].surname
+        td.appendChild(document.createTextNode(name))
         tr.appendChild(td)
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode(window.contractors[i].TFN))
+        td.appendChild(document.createTextNode(window.contractors[i].abn))
         tr.appendChild(td)
         var td = document.createElement('td');
         td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].grossPayments)));
@@ -827,29 +850,6 @@ function formatdate(element) {
 }
 
 function initdates() {
-  window.startpicker = new Pikaday(
-    {
-        field: document.getElementById('startbox'),
-        firstDay: 1,
-        maxDate: new Date(),
-        onSelect: function() {
-            var date = this.getMoment().format('Do MMMM YYYY');
-            document.getElementById('startbox').value = date;
-        }
-    });
-    
-  window.endpicker = new Pikaday(
-    {
-        field: document.getElementById('endbox'),
-        firstDay: 1,
-        maxDate: new Date(),
-        onSelect: function() {
-            var date = this.getMoment().format('Do MMMM YYYY');
-            document.getElementById('endbox').value = date;
-        }
-    });
-  window.startpicker.setMoment(window.startFY);
-  window.endpicker.setMoment(window.endFY);
 }
 
 $('.dropDownListItem').click(function(e) {
@@ -909,8 +909,13 @@ var rightText = function(text, x, y) {
 }
 
 function main() {
-  window.contractors = [];
-  window.payer = {};
+  //window.contractors = [];
+  window.contractors = [{"name":"","tradingName":"Something","secondName":"","surname":"","abn":"11 111 111 111","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"0","gst":"0","amendment":"O"}];
+  //window.payer = {};
+  window.payer = {"businessName":"Something","tradingName":"","ABN":"11111111111","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
+  // remove table create and validate after defaults back to blank
+		tableCreate();
+    openvalidate();
   window.now = moment();
   if (window.now.month() < 6) {
     window.now.set('year', now.year() -1);
