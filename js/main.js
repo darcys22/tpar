@@ -559,7 +559,7 @@ function addSupplierDataRecords() {
   //record length and identifier
   window.TPAR += "996IDENTREGISTER2"
   //SupplierName
-  catAlphanumeric(200, window.payer.name);
+  catAlphanumeric(200, window.payer.businessName);
   //Supplier Contact Name
   catAlphanumeric(38, window.payer.contactName);
   //Supplier Number
@@ -602,7 +602,7 @@ function addPayerIdentityDataRecord() {
   //Financial Year
   catNumeric(4,window.payer.financialYear);
   //Payer Name
-  catAlphanumeric(200, window.payer.name);
+  catAlphanumeric(200, window.payer.businessName);
   //Payer Trading Name
   catAlphanumeric(200, window.payer.tradingName);
   //Payer street address
@@ -661,49 +661,29 @@ function addPayeeDataRecord(arrayPosition) {
   //Payee postcode
   catNumeric(4, window.contractors[arrayPosition].postcode);
   //Payee country (blank for Aus) 
-  catAlphanumeric(20, "  ");
-  //Period Start
-  catDate(window.contractors[arrayPosition].periodStart);
-  //Period End
-  catDate(window.contractors[arrayPosition].periodEnd);
-  //Tax Withheld
-  catNumeric(8, window.contractors[arrayPosition].taxWithheld);
+  catAlphanumeric(20, " ");
+  //Payee Number
+  catAlphanumeric(15, " ");
+  //Payee BSB 
+  catAlphanumeric(6, " ");
+  //Payee Acc # 
+  catAlphanumeric(9, " ");
   //Gross Payments
-  catNumeric(8, window.contractors[arrayPosition].grossPayments);
-  //Total Allowances
-  catNumeric(8, window.contractors[arrayPosition].allowances);
-  //Lumpsum A
-  catNumeric(8, window.contractors[arrayPosition].lumpsumA);
-  //Lumpsum B
-  catNumeric(8, window.contractors[arrayPosition].lumpsumB);
-  //Lumpsum D
-  catNumeric(8, window.contractors[arrayPosition].lumpsumD);
-  //Lumpsum E
-  catNumeric(8, window.contractors[arrayPosition].lumpsumE);
-  //Community Development Employment Project
-  catNumeric(8, 0);
-  //Filler
-  catNumeric(8, 0);
-  //Reportable Fringe benefit
-  catNumeric(8, window.contractors[arrayPosition].fb);
+  catNumeric(11, window.contractors[arrayPosition].grossPayments);
+  //Tax Withheld
+  catNumeric(11, window.contractors[arrayPosition].taxWithheld);
+  //GST
+  catNumeric(11, window.contractors[arrayPosition].gst);
+  //payments only no grants
+  window.TPAR += "P"
+  //Ignoring Grant Payments Details
+  catAlphanumeric(8+200+76, " ");
+  //Statement by a supplier = No
+  window.TPAR += "N"
   //Amendment Indicator
-  window.TPAR += "O"
-  //Reportable Employer Superannuation Contributions
-  catNumeric(8, window.contractors[arrayPosition].superSGC);
-  //Lump Sum A type
-  catAlphanumeric(1, window.contractors[arrayPosition].lumpsumAtype);
-  //Workplace Giving
-  catNumeric(8, window.contractors[arrayPosition].workplaceGiving);
-  //Union Fees
-  catNumeric(8, window.contractors[arrayPosition].union);
-  //Exempt foreign employment income
-  catNumeric(8, window.contractors[arrayPosition].foreign);
-  //Annuity Return of Capital
-  catNumeric(8, window.contractors[arrayPosition].annuity);
-  //FBT Exemption
-  catAlphanumeric(1, window.contractors[arrayPosition].fbtExempt);
+  catAlphanumeric(1, window.contractors[arrayPosition].amendment);
   //Filler
-  catAlphanumeric(274, "  ");
+  catAlphanumeric(36, "  ");
   window.TPAR += "\r\n";
 }
 
@@ -910,7 +890,7 @@ var rightText = function(text, x, y) {
 
 function main() {
   //window.contractors = [];
-  window.contractors = [{"name":"","tradingName":"Something","secondName":"","surname":"","abn":"11 111 111 111","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"0","gst":"0","amendment":"O"}];
+  window.contractors = [{"businessName":"","tradingName":"Something","secondName":"","surname":"","abn":"11 111 111 111","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"0","gst":"0","amendment":"O"}];
   //window.payer = {};
   window.payer = {"businessName":"Something","tradingName":"","ABN":"11111111111","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
   // remove table create and validate after defaults back to blank
