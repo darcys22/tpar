@@ -94,26 +94,26 @@ function validateTPAR() {
 
 	validate.validators.abn = function($abn, options, key, attributes) {
     return null;
-    //var weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
+    var weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
-    //// strip anything other than digits
-    //$abn = $abn.toString().replace("/[^\d]/","");
+    // strip anything other than digits
+    $abn = $abn.toString().replace("/[^\d]/","");
 
-    //// check length is 11 digits
-    //if ($abn.length==11) {
-        //// apply ato check method 
-        //var sum = 0;
-        //weights.forEach(function(weight, position) {
-            //var digit = $abn[position] - (position ? 0 : 1);
-            //sum += weight * digit;
-        //})
-				//if((sum % 89)==0){
-					//return null;
-				//} else {
-					//return "Invalid ABN"
-				//}
-    //} 
-		//return "ABN Length Invalid";
+    // check length is 11 digits
+    if ($abn.length==11) {
+        // apply ato check method 
+        var sum = 0;
+        weights.forEach(function(weight, position) {
+            var digit = $abn[position] - (position ? 0 : 1);
+            sum += weight * digit;
+        })
+        if((sum % 89)==0){
+          return null;
+        } else {
+          return "Invalid ABN"
+        }
+    } 
+    return "ABN Length Invalid";
 	};
 
   validate.validators.nameExists = function(payments, options, key, attributes) {
@@ -665,9 +665,9 @@ function addPayeeDataRecord(arrayPosition) {
   //Payee Number
   catAlphanumeric(15, " ");
   //Payee BSB 
-  catAlphanumeric(6, " ");
+  catNumeric(6, " ");
   //Payee Acc # 
-  catAlphanumeric(9, " ");
+  catNumeric(9, " ");
   //Gross Payments
   catNumeric(11, window.contractors[arrayPosition].grossPayments);
   //Tax Withheld
@@ -796,7 +796,7 @@ function tableCreate() {
         td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].grossPayments)));
         tr.appendChild(td)
         var td = document.createElement('td');
-        td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].taxWithheld)));
+        td.appendChild(document.createTextNode("$" + moneyNumber(window.contractors[i].gst)));
         tr.appendChild(td)
         var td = document.createElement('td');
         var btn = document.createElement('button');
@@ -832,67 +832,11 @@ function formatdate(element) {
 function initdates() {
 }
 
-$('.dropDownListItem').click(function(e) {
-    var element = document.getElementById('exemptfbt');
-    var name = e.currentTarget;
-    if (name.getAttribute("data-name") == "E") {
-      window.excluded = "Y"
-      element.innerHTML = "E<span class='caret'></span>"
-    } else {
-      element.innerHTML = "N<span class='caret'></span>"
-      window.excluded = "N"
-    }
-});
-function makePDF() {
-  var background = new Image;
-  background.src = 'background.jpg';
-  window.doc = new jsPDF()
-  background.onload = function() {
-    for(var i = 0; i < window.contractors.length; i++) {
-      if(i > 0) window.doc.addPage();
-      window.doc.addImage(background, 'JPEG', 0, 0,210,297);
-      window.doc.setFontSize(10)
-      rightText(moneyNumber(window.contractors[i].taxWithheld), 185, 99)
-      rightText(moneyNumber(window.contractors[i].lumpsumA), 175, 115)
-      window.doc.text(188, 115, window.contractors[i].lumpsumAtype);
-      rightText(moneyNumber(window.contractors[i].lumpsumB), 175, 125)
-      rightText(moneyNumber(window.contractors[i].lumpsumD), 175, 135)
-      rightText(moneyNumber(window.contractors[i].lumpsumE), 175, 145)
-      rightText(moneyNumber(window.contractors[i].grossPayments), 109, 115)
-      rightText("0", 109, 125)
-      rightText(moneyNumber(window.contractors[i].fb), 109, 135)
-      rightText(moneyNumber(window.contractors[i].superSGC), 109, 145)
-      rightText(moneyNumber(window.contractors[i].allowances), 109, 155)
-      window.doc.text(61, 27, 'Payment summary for the year ended 30 June ' + window.payer.financialYear);
-      var arr = [ window.contractors[i].name + " " + window.contractors[i].surname, window.contractors[i].address, window.contractors[i].suburb, window.contractors[i].state + ' ' + window.contractors[i].postcode];
-      if (window.contractors[i].address2.length > 0 && window.contractors[i].address2.trim()) {
-        arr.splice(2, 0, window.contractors[i].address2);
-      }
-      window.doc.text(25, 48, arr);
-      window.doc.text(84, 88,window.contractors[i].periodStart);
-      window.doc.text(133, 88,window.contractors[i].periodEnd);
-      window.doc.text(56, 100,(formatcomma(window.contractors[i].TFN)));
-      window.doc.text(81, 261, (formatcomma(window.payer.ABN)));
-      window.doc.text(160, 261, window.payer.ABNBranch);
-      window.doc.text(40, 268, window.payer.name);
-      window.doc.text(65, 278, window.payer.contactName);
-      window.doc.text(160, 278, moment().format('Do MMMM YYYY'));
-    }
-    window.doc.save('PaymentSummary.pdf')
-  };
-
-}
-var rightText = function(text, x, y) {
-    var textWidth = window.doc.getStringUnitWidth(text) * window.doc.internal.getFontSize() / window.doc.internal.scaleFactor;
-    var textOffset = (x - textWidth);
-    window.doc.text(textOffset, y, text);
-}
-
 function main() {
-  //window.contractors = [];
-  window.contractors = [{"businessName":"","tradingName":"Something","secondName":"","surname":"","abn":"11 111 111 111","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"0","gst":"0","amendment":"O"}];
-  //window.payer = {};
-  window.payer = {"businessName":"Something","tradingName":"","ABN":"11111111111","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
+  window.contractors = [];
+  //window.contractors = [{"businessName":"","name":"","tradingName":"Something2","secondName":"","surname":"","abn":"27191597427","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"100","gst":"10","amendment":"O"}];
+  window.payer = {};
+  //window.payer = {"businessName":"Something","tradingName":"","ABN":"11223491505","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
   // remove table create and validate after defaults back to blank
 		tableCreate();
     openvalidate();
