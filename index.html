@@ -25,6 +25,13 @@
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 					<ul class="nav navbar-nav navbar-right">
+            <li>
+                <li> 
+                  <input id="import" type="file" style="display:none;" onchange="handleFiles(event)">
+                  <a href="" id="import_link">Import</a>
+                </li>
+            </li>
+
 						<li> <a href="" data-toggle="modal" data-target="#instructionsModal">Instructions</a> </li>
 					</ul>
 				</div><!-- /.navbar-collapse -->
@@ -363,17 +370,6 @@
                 <hr>
                 <!-- Text input-->
                 <div class="form-group">
-                  <label class="col-md-3 control-label">Total Tax Withheld</label>  
-                  <div class="col-md-7 inputGroupContainer">
-                    <div class="input-group">
-                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
-                      <input name="taxWithheld" value="0" class="form-control" type="number" min="0" step="1" onClick="this.select()" required>
-                      <span class="input-group-addon">.00</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group">
                   <label class="col-md-3 control-label">Gross Payments</label>  
                   <div class="col-md-7 inputGroupContainer">
                     <div class="input-group">
@@ -390,6 +386,17 @@
                     <div class="input-group">
                       <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
                       <input name="gst" class="form-control" type="number" min="0" step="1" onClick="this.select()" value="0" required>
+                      <span class="input-group-addon">.00</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Text input-->
+                <div class="form-group">
+                  <label class="col-md-3 control-label">Total Tax Withheld</label>  
+                  <div class="col-md-7 inputGroupContainer">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                      <input name="taxWithheld" value="0" class="form-control" type="number" min="0" step="1" onClick="this.select()" required>
                       <span class="input-group-addon">.00</span>
                     </div>
                   </div>
@@ -444,7 +451,7 @@
             <div class="row">
               <label class="col-md-5 control-label"></label>
               <div class="col-md-3">
-                <!--<button class="btn btn-default" id="pdfbutton" onclick="" >Create Payment Summary PDF</button>-->
+                <button class="btn btn-default" id="databutton" onclick="" >Create Summary File</button>
               </div>
               <div class="col-md-1">
               </div>

@@ -1,4 +1,34 @@
 
+function handleFiles(event) {
+
+  var reader = new FileReader();
+  reader.onload = onReaderLoad;
+  reader.readAsText(event.target.files[0]);
+	//Papa.parse(file, {
+			//header: true,
+      //skipEmptyLines: true,
+			//complete: function (results) {
+          //window.employees.push.apply(window.employees,results.data);
+          //tableCreate();
+          //openvalidate();
+			//}
+	//});
+}
+function onReaderLoad(event){
+    var obj = JSON.parse(event.target.result);
+    window.payer = obj.Payer;
+    window.contractors = obj.Contractors
+		tableCreate();
+    openvalidate();
+}
+
+$(function(){
+    $("#import_link").on('click', function(e){
+            e.preventDefault();
+            $("#import:hidden").trigger('click');
+        });
+});
+
 $('#addContractor').validator().on('submit', function (e) {
   if (e.isDefaultPrevented()) {
     // handle the invalid form...
@@ -93,7 +123,7 @@ function validateTPAR() {
 
 
 	validate.validators.abn = function($abn, options, key, attributes) {
-    return null;
+    //return null;
     var weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
     // strip anything other than digits
@@ -501,17 +531,17 @@ function validateTPAR() {
 }
 function openfile() {
   var createbutton = document.getElementById('createbutton');
-  //var reportbutton = document.getElementById('pdfbutton');
+  var databutton = document.getElementById('databutton');
   if (window.valid) {
     createbutton.disabled = false
     createbutton.onclick = function() {createTPAR()};
-    //reportbutton.disabled = false
-    //reportbutton.onclick = function() {makePDF()};
+    databutton.disabled = false
+    databutton.onclick = function() {makeJSON()};
   } else {
     createbutton.disabled = true
     createbutton.onclick = function(){};
-    //reportbutton.disabled = true
-    //reportbutton.onclick = function(){};
+    reportbutton.disabled = true
+    reportbutton.onclick = function(){};
   }
 }
 
@@ -538,6 +568,12 @@ function createTPAR() {
   }
   addFileTotalRecord();
   download("TPAR", window.TPAR);
+}
+
+function makeJSON() {
+  window.JSONFile = {Payer: window.payer, Contractors: window.contractors };
+  var text = JSON.stringify(window.JSONFile, null, '\t');
+  download("TPARData.txt", text);
 }
 
 function addSupplierDataRecords() {
