@@ -59,7 +59,7 @@ function editPayer() {
     var payerheading = document.getElementById('payername');
     payerheading.innerHTML = '';
     var text = document.createElement('small');
-    text.appendChild(document.createTextNode(window.payer.tradingName || window.payer.name))
+    text.appendChild(document.createTextNode(window.payer.tradingName || window.payer.businessName))
     text.appendChild(document.createTextNode( " - " + window.payer.ABN));
     payerheading.appendChild(text);
     openvalidate();
@@ -564,7 +564,7 @@ function createTPAR() {
   addPayerIdentityDataRecord();
   addSoftwareDataRecord();
   for (var i = 0; i < window.contractors.length; i++) {
-    addPayeeDataRecord(i);
+    addPayeeDataRecordv1(i);
   }
   addFileTotalRecord();
   download("TPAR", window.TPAR);
@@ -578,7 +578,7 @@ function makeJSON() {
 
 function addSupplierDataRecords() {
   //record length and identifier
-  window.TPAR += "996IDENTREGISTER1"
+  window.TPAR += "704IDENTREGISTER1"
   //ABN
   window.TPAR += window.payer.ABN
   //Run Type P = Production, T = Test
@@ -588,12 +588,12 @@ function addSupplierDataRecords() {
   //Data Type payg withholding summaries must be E, Type of report must be A, format of report must be P
   window.TPAR += "PCM"
   //Report specification number
-  window.TPAR += "FPAIVV02.0"
+  window.TPAR += "FPAIVV01.0"
   //Filler
-  catAlphanumeric(946, " ");
+  catAlphanumeric(654, " ");
   window.TPAR += "\r\n";
   //record length and identifier
-  window.TPAR += "996IDENTREGISTER2"
+  window.TPAR += "704IDENTREGISTER2"
   //SupplierName
   catAlphanumeric(200, window.payer.businessName);
   //Supplier Contact Name
@@ -601,10 +601,10 @@ function addSupplierDataRecords() {
   //Supplier Number
   catAlphanumeric(15, window.payer.contactNumber);
   //Filler
-  catAlphanumeric(15 + 16 + 695, " ");
+  catAlphanumeric(15 + 16 + 403, " ");
   window.TPAR += "\r\n";
   //record length and identifier
-  window.TPAR += "996IDENTREGISTER3"
+  window.TPAR += "704IDENTREGISTER3"
   //Supplier street address
   catAlphanumeric(38,window.payer.address);
   catAlphanumeric(38,window.payer.address2);
@@ -623,14 +623,14 @@ function addSupplierDataRecords() {
   //Supplier email
   catAlphanumeric(76, "  ");
   //Filler
-  catAlphanumeric(643, "  ");
+  catAlphanumeric(351, "  ");
   window.TPAR += "\r\n";
 
 }
 
 function addPayerIdentityDataRecord() {
   //record length and identifier
-  window.TPAR += "996IDENTITY"
+  window.TPAR += "704IDENTITY"
   //ABN
   window.TPAR += window.payer.ABN
   //ABN Branch Number
@@ -657,18 +657,63 @@ function addPayerIdentityDataRecord() {
   //Supplier Number
   catAlphanumeric(15, window.payer.contactNumber);
   //Filler
-  catAlphanumeric(15 + 76 + 293, "  ");
+  catAlphanumeric(15 + 76 + 1, "  ");
   window.TPAR += "\r\n";
 }
 
 
 function addSoftwareDataRecord() {
   //record length and identifier
-  window.TPAR += "996SOFTWARE"
+  window.TPAR += "704SOFTWARE"
   //Software product Type
   catAlphanumeric(80, "COMMERCIAL Sean Darcy DarcyFinancial www.taxablepayments.com.au TPARCreator 1");
   //Filler
-  catAlphanumeric(905, "  ");
+  catAlphanumeric(613, "  ");
+  window.TPAR += "\r\n";
+}
+
+function addPayeeDataRecordv1(arrayPosition) {
+  //record length and identifier and Income type S for salary
+  window.TPAR += "704DPAIVS"
+  //TFN
+  catNumeric(11,window.contractors[arrayPosition].abn);
+  //Payee Surname
+  catAlphanumeric(30, window.contractors[arrayPosition].surname);
+  //Payee Name
+  catAlphanumeric(15, window.contractors[arrayPosition].name);
+  //Payee Second Name
+  catAlphanumeric(15, window.contractors[arrayPosition].secondName);
+  //Payee Name
+  catAlphanumeric(200, window.contractors[arrayPosition].businessName);
+  //Payee Trading Name
+  catAlphanumeric(200, window.contractors[arrayPosition].tradingName);
+  //Payee street address
+  catAlphanumeric(38, window.contractors[arrayPosition].address);
+  catAlphanumeric(38, window.contractors[arrayPosition].address2);
+  //Payee suburb
+  catAlphanumeric(27, window.contractors[arrayPosition].suburb);
+  //Payee state
+  catAlphanumeric(3, window.contractors[arrayPosition].state);
+  //Payee postcode
+  catNumeric(4, window.contractors[arrayPosition].postcode);
+  //Payee country (blank for Aus) 
+  catAlphanumeric(20, " ");
+  //Payee Number
+  catAlphanumeric(15, " ");
+  //Payee BSB 
+  catNumeric(6, " ");
+  //Payee Acc # 
+  catNumeric(9, " ");
+  //Gross Payments
+  catNumeric(11, window.contractors[arrayPosition].grossPayments);
+  //Tax Withheld
+  catNumeric(11, window.contractors[arrayPosition].taxWithheld);
+  //GST
+  catNumeric(11, window.contractors[arrayPosition].gst);
+  //Amendment Indicator
+  catAlphanumeric(1, window.contractors[arrayPosition].amendment);
+  //Filler
+  catAlphanumeric(30, "  ");
   window.TPAR += "\r\n";
 }
 
@@ -725,11 +770,11 @@ function addPayeeDataRecord(arrayPosition) {
 
 function addFileTotalRecord() {
   //record length and identifier
-  window.TPAR += "996FILE-TOTAL"
+  window.TPAR += "704FILE-TOTAL"
   //Annuity Return of Capital
   catNumeric(8, window.contractors.length + 6);
   //Filler
-  catAlphanumeric(975, "  ");
+  catAlphanumeric(683, "  ");
   window.TPAR += "\r\n";
 }
 function catxAlphanumeric(length, text) {
@@ -874,8 +919,8 @@ function main() {
   window.payer = {};
   //window.payer = {"businessName":"Something","tradingName":"","ABN":"11223491505","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
   // remove table create and validate after defaults back to blank
-		tableCreate();
-    openvalidate();
+		//tableCreate();
+    //openvalidate();
   window.now = moment();
   if (window.now.month() < 6) {
     window.now.set('year', now.year() -1);
