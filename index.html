@@ -27,8 +27,8 @@
 					<ul class="nav navbar-nav navbar-right">
             <li>
                 <li> 
-                  <input id="import" type="file" style="display:none;" onchange="handleFiles(event)">
-                  <a href="" id="import_link">Import</a>
+                  <input id="upload" type="file" style="display:none;" onchange="handleFiles(event)">
+                  <a href="" id="upload_link">Upload</a>
                 </li>
                 <li> <a href="https://www.taxsource.com.au" >Other Tools</a> </li>
             </li>
@@ -472,7 +472,9 @@
             <h2>How to Use TPAR Maker</h2>
           </div>
           <div class = "modal-body">
-            <h4><em>What does it do</em></h4>
+            <h4><em>Using the Bulk upload feature</em></h4>
+            <p>You can upload a CSV that has column headers for each key. This feature is new and skips a layer of validation. Consider it still in beta</p>
+            <a href="/example.csv" target="_blank">Example CSV</a>
             <br>
           </div>
         </div>
@@ -484,6 +486,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/locale/en-au.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/validate.js/0.10.0/validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <script src="js/papaparse.min.js"></script>
     <script type="text/javascript" src="js/main.js"></script> 
   </body>
   <div id="footer">

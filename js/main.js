@@ -1,31 +1,22 @@
-
 function handleFiles(event) {
 
-  var reader = new FileReader();
-  reader.onload = onReaderLoad;
-  reader.readAsText(event.target.files[0]);
-	//Papa.parse(file, {
-			//header: true,
-      //skipEmptyLines: true,
-			//complete: function (results) {
-          //window.employees.push.apply(window.employees,results.data);
-          //tableCreate();
-          //openvalidate();
-			//}
-	//});
-}
-function onReaderLoad(event){
-    var obj = JSON.parse(event.target.result);
-    window.payer = obj.Payer;
-    window.contractors = obj.Contractors
-		tableCreate();
-    openvalidate();
+  var file = event.target.files[0];
+
+  Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+          window.contractors.push.apply(window.contractors,results.data);
+          tableCreate();
+          openvalidate();
+      }
+  });
 }
 
 $(function(){
-    $("#import_link").on('click', function(e){
+    $("#upload_link").on('click', function(e){
             e.preventDefault();
-            $("#import:hidden").trigger('click');
+            $("#upload:hidden").trigger('click');
         });
 });
 
