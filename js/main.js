@@ -6,11 +6,159 @@ function handleFiles(event) {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-          window.contractors.push.apply(window.contractors,results.data);
+          window.contractors.push.apply(window.contractors,formatupload(results.data));
           tableCreate();
           openvalidate();
       }
   });
+}
+
+//TODO:(Sean)
+//Headers:
+//-ABN	
+//-Title	
+//-FamilyName	
+//-GivenName	
+//-OrganisationalNameType	
+//-OrganisationalName	
+//-AddressType	
+//-Line1	
+//-Line2	
+//-LocalityName	
+//-Postcode	
+//-StateOrTerritory	
+//-CountryCode	
+//-TelephoneAreaCode	
+//-TelephoneNumber	
+//-BankStateBranchNumber	
+//-FinancialInstitutionAccountNumber	
+//-BusinessPaymentGrossAmount	
+//-IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount	
+//-GoodsAndServicesTaxLiabilityAmount	
+//-Amendment
+//
+function handlejpFiles(event) {
+
+  var file = event.target.files[0];
+
+  Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+          window.contractors.push.apply(window.contractors,formatupload(formatjpresults(results.data)));
+          tableCreate();
+          openvalidate();
+      }
+  });
+}
+
+function removeDuplicates(array) {
+    var valuesSoFar = [];
+    var duplicateindex = [];
+    for (var i = 0; i < array.length; ++i) {
+        var value = array[i];
+        if (valuesSoFar.indexOf(value) !== -1) {
+            //TODO:(sean) Logging
+            duplicateindex.push(i);
+        }
+        valuesSoFar.push(value);
+    }
+
+    array = array.filter((item, index) => duplicateindex.indexOf(index) > -1);
+
+    return array;
+}
+
+function formatupload(arr) {
+
+  arr = removeDuplicates(arr);
+
+  for (var i in arr) {
+    arr[i].businessName = replaceAll(arr[i].businessName,"&","and")
+    arr[i].businessName = replaceAll(arr[i].businessName,"+","and")
+    arr[i].businessName = replaceAll(arr[i].businessName,"/"," ")
+    arr[i].businessName = replaceAll(arr[i].businessName,"-"," ")
+    arr[i].businessName = replaceAll(arr[i].businessName,"'","")
+    arr[i].businessName = replaceAll(arr[i].businessName,"(","")
+    arr[i].businessName = replaceAll(arr[i].businessName,")","")
+
+    arr[i].name = replaceAll(arr[i].name,"&","and")
+    arr[i].name = replaceAll(arr[i].name,"+","and")
+    arr[i].name = replaceAll(arr[i].name,"/"," ")
+    arr[i].name = replaceAll(arr[i].name,"-"," ")
+    arr[i].name = replaceAll(arr[i].name,"'","")
+    arr[i].name = replaceAll(arr[i].name,"(","")
+    arr[i].name = replaceAll(arr[i].name,")","")
+
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"&","and")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"+","and")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"/"," ")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"-"," ")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"'","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"(","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,")","")
+
+    arr[i].secondName = replaceAll(arr[i].secondName,"&","and")
+    arr[i].secondName = replaceAll(arr[i].secondName,"+","and")
+    arr[i].secondName = replaceAll(arr[i].secondName,"/"," ")
+    arr[i].secondName = replaceAll(arr[i].secondName,"-"," ")
+    arr[i].secondName = replaceAll(arr[i].secondName,"'","")
+    arr[i].secondName = replaceAll(arr[i].secondName,"(","")
+    arr[i].secondName = replaceAll(arr[i].secondName,")","")
+
+    arr[i].surname = replaceAll(arr[i].surname,"&","and")
+    arr[i].surname = replaceAll(arr[i].surname,"+","and")
+    arr[i].surname = replaceAll(arr[i].surname,"/"," ")
+    arr[i].surname = replaceAll(arr[i].surname,"-"," ")
+    arr[i].surname = replaceAll(arr[i].surname,"'","")
+    arr[i].surname = replaceAll(arr[i].surname,"(","")
+    arr[i].surname = replaceAll(arr[i].surname,")","")
+
+    arr[i].address = replaceAll(arr[i].address,"&","and")
+    arr[i].address = replaceAll(arr[i].address,"+","and")
+    arr[i].address = replaceAll(arr[i].address,"/"," ")
+    arr[i].address = replaceAll(arr[i].address,"-"," ")
+    arr[i].address = replaceAll(arr[i].address,"'","")
+    arr[i].address = replaceAll(arr[i].address,"(","")
+    arr[i].address = replaceAll(arr[i].address,")","")
+
+    arr[i].address2 = replaceAll(arr[i].address2,"&","and")
+    arr[i].address2 = replaceAll(arr[i].address2,"+","and")
+    arr[i].address2 = replaceAll(arr[i].address2,"/"," ")
+    arr[i].address2 = replaceAll(arr[i].address2,"-"," ")
+    arr[i].address2 = replaceAll(arr[i].address2,"'","")
+    arr[i].address2 = replaceAll(arr[i].address2,"(","")
+    arr[i].address2 = replaceAll(arr[i].address2,")","")
+
+    arr[i].suburb = replaceAll(arr[i].suburb,"&","and")
+    arr[i].suburb = replaceAll(arr[i].suburb,"+","and")
+    arr[i].suburb = replaceAll(arr[i].suburb,"/"," ")
+    arr[i].suburb = replaceAll(arr[i].suburb,"-"," ")
+    arr[i].suburb = replaceAll(arr[i].suburb,"'","")
+    arr[i].suburb = replaceAll(arr[i].suburb,"(","")
+    arr[i].suburb = replaceAll(arr[i].suburb,")","")
+
+    arr[i].state = replaceAll(arr[i].state,"&","and")
+    arr[i].state = replaceAll(arr[i].state,"+","and")
+    arr[i].state = replaceAll(arr[i].state,"/"," ")
+    arr[i].state = replaceAll(arr[i].state,"-"," ")
+    arr[i].state = replaceAll(arr[i].state,"'","")
+    arr[i].state = replaceAll(arr[i].state,"(","")
+    arr[i].state = replaceAll(arr[i].state,")","")
+  }
+
+  return arr;
+}
+
+function replaceAll(str, find, replace) {
+  return str.replace(new RegExp(find, 'g'), replace);
+}
+
+function formatjpresults(arr) {
+  //contractors = [];
+  contractors = [{"businessName":arr.OrganisationalName,"name":arr.GivenName,"tradingName":"","secondName":"","surname":arr.FamilyName,"abn":arr.ABN,"address":arr.Line1,"address2":arr.Line2,"suburb":arr.LocalityName,"state":arr.StateOrTerritory,"postcode":arr.Postcode,"taxWithheld":arr.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount,"grossPayments":arr.BusinessPaymentGrossAmount,"gst":arr.GoodsAndServicesTaxLiabilityAmount,"amendment":((arr.Amendment) ? "A":"O")}];
+  console.log(contractors);
+  return arr;
 }
 
 $(function(){
