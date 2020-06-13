@@ -6,17 +6,223 @@ function handleFiles(event) {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-          window.contractors.push.apply(window.contractors,results.data);
-          tableCreate();
-          openvalidate();
+        window.contractors.push.apply(window.contractors,formatupload(results.data));
+        tableCreate();
+        openvalidate();
       }
   });
+}
+
+//TODO:(Sean)
+function handlejpFiles(event) {
+
+  var file = event.target.files[0];
+
+  Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        window.contractors.push.apply(window.contractors,formatupload(formatjpresults(results.data)));
+        tableCreate();
+        openvalidate();
+      }
+  });
+}
+
+function addStrings(str1, str2) {
+  num1 = parseFloat(str1);
+  num2 = parseFloat(str2);
+  added = num1 + num2;
+
+  return added.toString();
+}
+
+function removeDuplicates(arr) {
+  var valuesSoFar = [];
+  var abnsSoFar = [];
+  var duplicateindex = [];
+  for (var i = 0; i < arr.length; ++i) {
+    var value = arr[i];
+    var index = abnsSoFar.indexOf(value.abn);
+    if (index !== -1) {
+      //TODO:(sean) Logging
+      duplicateindex.push(i);
+      arr[index].grossPayments = addStrings(arr[index].grossPayments, arr[i].grossPayments);
+      arr[index].gst = addStrings(arr[index].grossPayments, arr[i].gst);
+      arr[index].taxWithheld = addStrings(arr[index].taxWithheld, arr[i].taxWithheld);
+        
+    }
+    valuesSoFar.push(value);
+    abnsSoFar.push(value.abn);
+  }
+
+  var x = valuesSoFar.filter((item, index) => 
+    !duplicateindex.includes(index)
+  );
+
+  return x;
+}
+
+
+function formatupload(original) {
+
+  arr = removeDuplicates(original);
+
+  for (var i in arr) {
+    arr[i].businessName = replaceAll(arr[i].businessName,"&","and")
+    arr[i].businessName = replaceAll(arr[i].businessName,"\\+","and")
+    arr[i].businessName = replaceAll(arr[i].businessName,"/"," ")
+    arr[i].businessName = replaceAll(arr[i].businessName,"-"," ")
+    arr[i].businessName = replaceAll(arr[i].businessName,"'","")
+    arr[i].businessName = replaceAll(arr[i].businessName,"\\(","")
+    arr[i].businessName = replaceAll(arr[i].businessName,"\\)","")
+    arr[i].businessName = replaceAll(arr[i].businessName,",","")
+    arr[i].businessName = replaceAll(arr[i].businessName,"\\.","")
+    arr[i].businessName = replaceAll(arr[i].businessName,"\\_"," ")
+    arr[i].businessName = replaceAll(arr[i].businessName,":","")
+
+    arr[i].name = replaceAll(arr[i].name,"&","and")
+    arr[i].name = replaceAll(arr[i].name,"\\+","and")
+    arr[i].name = replaceAll(arr[i].name,"/"," ")
+    arr[i].name = replaceAll(arr[i].name,"-"," ")
+    arr[i].name = replaceAll(arr[i].name,"'","")
+    arr[i].name = replaceAll(arr[i].name,"\\(","")
+    arr[i].name = replaceAll(arr[i].name,"\\)","")
+    arr[i].name = replaceAll(arr[i].name,",","")
+    arr[i].name = replaceAll(arr[i].name,"\\.","")
+    arr[i].name = replaceAll(arr[i].name,"\\_"," ")
+    arr[i].name = replaceAll(arr[i].name,":","")
+
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"&","and")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"\\+","and")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"/"," ")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"-"," ")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"'","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"\\(","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"\\)","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,",","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"\\.","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,"\\_","")
+    arr[i].tradingName = replaceAll(arr[i].tradingName,":","")
+
+    arr[i].secondName = replaceAll(arr[i].secondName,"&","and")
+    arr[i].secondName = replaceAll(arr[i].secondName,"\\+","and")
+    arr[i].secondName = replaceAll(arr[i].secondName,"/"," ")
+    arr[i].secondName = replaceAll(arr[i].secondName,"-"," ")
+    arr[i].secondName = replaceAll(arr[i].secondName,"'","")
+    arr[i].secondName = replaceAll(arr[i].secondName,"\\(","")
+    arr[i].secondName = replaceAll(arr[i].secondName,"\\)","")
+    arr[i].secondName = replaceAll(arr[i].secondName,",","")
+    arr[i].secondName = replaceAll(arr[i].secondName,"\\.","")
+    arr[i].secondName = replaceAll(arr[i].secondName,"\\_","")
+    arr[i].secondName = replaceAll(arr[i].secondName,":","")
+
+    arr[i].surname = replaceAll(arr[i].surname,"&","and")
+    arr[i].surname = replaceAll(arr[i].surname,"\\+","and")
+    arr[i].surname = replaceAll(arr[i].surname,"/"," ")
+    arr[i].surname = replaceAll(arr[i].surname,"-"," ")
+    arr[i].surname = replaceAll(arr[i].surname,"'","")
+    arr[i].surname = replaceAll(arr[i].surname,"\\(","")
+    arr[i].surname = replaceAll(arr[i].surname,"\\)","")
+    arr[i].surname = replaceAll(arr[i].surname,",","")
+    arr[i].surname = replaceAll(arr[i].surname,"\\.","")
+    arr[i].surname = replaceAll(arr[i].surname,"\\_","")
+    arr[i].surname = replaceAll(arr[i].surname,":","")
+
+    arr[i].address = replaceAll(arr[i].address,"&","and")
+    arr[i].address = replaceAll(arr[i].address,"\\+","and")
+    arr[i].address = replaceAll(arr[i].address,"/"," ")
+    arr[i].address = replaceAll(arr[i].address,"-"," ")
+    arr[i].address = replaceAll(arr[i].address,"'","")
+    arr[i].address = replaceAll(arr[i].address,"\\(","")
+    arr[i].address = replaceAll(arr[i].address,"\\)","")
+    arr[i].address = replaceAll(arr[i].address,",","")
+    arr[i].address = replaceAll(arr[i].address,"\\.","")
+    arr[i].address = replaceAll(arr[i].address,"\\_","")
+    arr[i].address = replaceAll(arr[i].address,":","")
+
+    arr[i].address2 = replaceAll(arr[i].address2,"&","and")
+    arr[i].address2 = replaceAll(arr[i].address2,"\\+","and")
+    arr[i].address2 = replaceAll(arr[i].address2,"/"," ")
+    arr[i].address2 = replaceAll(arr[i].address2,"-"," ")
+    arr[i].address2 = replaceAll(arr[i].address2,"'","")
+    arr[i].address2 = replaceAll(arr[i].address2,"\\(","")
+    arr[i].address2 = replaceAll(arr[i].address2,"\\)","")
+    arr[i].address2 = replaceAll(arr[i].address2,",","")
+    arr[i].address2 = replaceAll(arr[i].address2,"\\.","")
+    arr[i].address2 = replaceAll(arr[i].address2,"\\_","")
+    arr[i].address2 = replaceAll(arr[i].address2,":","")
+
+    arr[i].suburb = replaceAll(arr[i].suburb,"&","and")
+    arr[i].suburb = replaceAll(arr[i].suburb,"\\+","and")
+    arr[i].suburb = replaceAll(arr[i].suburb,"/"," ")
+    arr[i].suburb = replaceAll(arr[i].suburb,"-"," ")
+    arr[i].suburb = replaceAll(arr[i].suburb,"'","")
+    arr[i].suburb = replaceAll(arr[i].suburb,"\\(","")
+    arr[i].suburb = replaceAll(arr[i].suburb,"\\)","")
+    arr[i].suburb = replaceAll(arr[i].suburb,",","")
+    arr[i].suburb = replaceAll(arr[i].suburb,"\\.","")
+    arr[i].suburb = replaceAll(arr[i].suburb,"\\_","")
+    arr[i].suburb = replaceAll(arr[i].suburb,":","")
+
+    arr[i].state = replaceAll(arr[i].state,"&","and")
+    arr[i].state = replaceAll(arr[i].state,"\\+","and")
+    arr[i].state = replaceAll(arr[i].state,"/"," ")
+    arr[i].state = replaceAll(arr[i].state,"-"," ")
+    arr[i].state = replaceAll(arr[i].state,"'","")
+    arr[i].state = replaceAll(arr[i].state,"\\(","")
+    arr[i].state = replaceAll(arr[i].state,"\\)","")
+    arr[i].state = replaceAll(arr[i].state,",","")
+    arr[i].state = replaceAll(arr[i].state,"\\.","")
+    arr[i].state = replaceAll(arr[i].state,"\\_","")
+    arr[i].state = replaceAll(arr[i].state,":","")
+  }
+
+  return arr;
+}
+
+function replaceAll(str, find, replace) {
+  if (!str || 0 === str.length) {
+    return str
+  } else {
+    return str.replace(new RegExp(find, 'g'), replace);
+  }
+}
+
+function formatjpresults(arr) {
+
+  //contractors = [];
+  ctrs = arr.map(line => ({
+      businessName: line.OrganisationalName,
+      name: line.GivenName.split(' ').slice(0, -1).join(' '),
+      tradingName: "",
+      secondName: line.GivenName.split(' ').slice(-1).join(' '),
+      surname: line.FamilyName,
+      abn: line.ABN,
+      address: line.Line1,
+      address2: line.Line2,
+      suburb: line.LocalityName,
+      state: line.StateOrTerritory,
+      postcode: line.Postcode,
+      taxWithheld: ((line.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount) ? stripCents(line.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount) : "0"),
+      grossPayments: ((line.BusinessPaymentGrossAmount) ? stripCents(line.BusinessPaymentGrossAmount) : "0"),
+      gst: ((line.GoodsAndServicesTaxLiabilityAmount) ? stripCents(line.GoodsAndServicesTaxLiabilityAmount) : "0"),
+      amendment: ((line.Amendment) ? "A":"O")
+  }));
+  return ctrs;
 }
 
 $(function(){
     $("#upload_link").on('click', function(e){
             e.preventDefault();
             $("#upload:hidden").trigger('click');
+        });
+});
+
+$(function(){
+    $("#jpupload_link").on('click', function(e){
+            e.preventDefault();
+            $("#jpupload:hidden").trigger('click');
         });
 });
 
@@ -77,6 +283,8 @@ function editContractor(index) {
     }
   }
   $("#contractorModal").modal() 
+  //$('#addContractor').validator()
+
 }
 function deleteContractor(index) {
   window.contractors.splice(index, 1);
@@ -85,11 +293,21 @@ function deleteContractor(index) {
 }
 
 function stripwhitecommas(str) {
-  window.test = str
   if (!str || 0 === str.length) {
     return str
   } else {
     return str.toString().replace(/[\s,]+/g,'').trim(); 
+  }
+}
+
+function stripCents(str) {
+  if (!str || 0 === str.length) {
+    return str
+  } else {
+    if (str.indexOf('.') !== -1) {
+      str = str.substring(0, str.indexOf('.'));
+    }
+    return str.replace(/[^0-9,]|,[0-9]*$/,''); 
   }
 }
 
@@ -444,7 +662,13 @@ function validateTPAR() {
     var errors = validate(window.contractors[i], contractorConstraints);
     if (errors) {
       window.contractorErrors.push(errors)
-      window.errorNames.push(window.contractors[i].abn);
+      if (window.contractors[i].abn) {
+        window.errorNames.push(window.contractors[i].abn);
+      } else if (window.contractors[i].businessName) {
+        window.errorNames.push(window.contractors[i].businessName);
+      } else {
+        window.errorNames.push(window.contractors[i].surname);
+      }
     }
   }
 
@@ -531,8 +755,10 @@ function openfile() {
   } else {
     createbutton.disabled = true
     createbutton.onclick = function(){};
-    reportbutton.disabled = true
-    reportbutton.onclick = function(){};
+    //reportbutton.disabled = true
+    //reportbutton.onclick = function(){};
+    databutton.disabled = true
+    databutton.onclick = function(){};
   }
 }
 
@@ -908,7 +1134,7 @@ function main() {
   window.contractors = [];
   //window.contractors = [{"businessName":"","name":"","tradingName":"Something2","secondName":"","surname":"","abn":"27191597427","address":"123 fake street","address2":"","suburb":"Alb","state":"NSW","postcode":"2640","taxWithheld":"0","grossPayments":"100","gst":"10","amendment":"O"}];
   window.payer = {};
-  //window.payer = {"businessName":"Something","tradingName":"","ABN":"11223491505","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"383 woodstock court east albury","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
+  //window.payer = {"businessName":"Something","tradingName":"","ABN":"11223491505","ABNBranch":"001","contactName":"Sean","contactNumber":"1012021","address":"123 fake street","address2":"","suburb":"Albury","state":"NSW","postcode":"2640","financialYear":"2017","endDate":"30062017"};
   // remove table create and validate after defaults back to blank
 		//tableCreate();
     //openvalidate();

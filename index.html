@@ -30,6 +30,10 @@
                   <input id="upload" type="file" style="display:none;" onchange="handleFiles(event)">
                   <a href="" id="upload_link">Upload</a>
                 </li>
+                <li> 
+                  <input id="jpupload" type="file" style="display:none;" onchange="handlejpFiles(event)">
+                  <a href="" id="jpupload_link">Jonas Premier Upload</a>
+                </li>
                 <li> <a href="https://www.taxsource.com.au" >Other Tools</a> </li>
             </li>
 
@@ -450,7 +454,14 @@
             <samp id="console"> </samp>
             <!-- Button -->
             <div class="row">
-              <label class="col-md-5 control-label"></label>
+              <!--<label class="col-md-5 control-label"></label>-->
+              <div class="col-md-1">
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-default" id="loggingbutton" onclick="" >Create Log File</button>
+              </div>
+              <div class="col-md-2">
+              </div>
               <div class="col-md-3">
                 <button class="btn btn-default" id="databutton" onclick="" >Create Summary File</button>
               </div>
