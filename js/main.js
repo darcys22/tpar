@@ -6,9 +6,9 @@ function handleFiles(event) {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-          window.contractors.push.apply(window.contractors,formatupload(results.data));
-          tableCreate();
-          openvalidate();
+        window.contractors.push.apply(window.contractors,formatupload(results.data));
+        tableCreate();
+        openvalidate();
       }
   });
 }
@@ -22,33 +22,51 @@ function handlejpFiles(event) {
       header: true,
       skipEmptyLines: true,
       complete: function (results) {
-          window.contractors.push.apply(window.contractors,formatupload(formatjpresults(results.data)));
-          tableCreate();
-          openvalidate();
+        window.contractors.push.apply(window.contractors,formatupload(formatjpresults(results.data)));
+        tableCreate();
+        openvalidate();
       }
   });
 }
 
-function removeDuplicates(array) {
-    var valuesSoFar = [];
-    var duplicateindex = [];
-    for (var i = 0; i < array.length; ++i) {
-        var value = array[i];
-        if (valuesSoFar.indexOf(value) !== -1) {
-            //TODO:(sean) Logging
-            duplicateindex.push(i);
-        }
-        valuesSoFar.push(value);
-    }
+function addStrings(str1, str2) {
+  num1 = parseFloat(str1);
+  num2 = parseFloat(str2);
+  added = num1 + num2;
 
-    array = array.filter((item, index) => duplicateindex.indexOf(index) > -1);
-
-    return array;
+  return added.toString();
 }
 
-function formatupload(arr) {
+function removeDuplicates(arr) {
+  var valuesSoFar = [];
+  var abnsSoFar = [];
+  var duplicateindex = [];
+  for (var i = 0; i < arr.length; ++i) {
+    var value = arr[i];
+    var index = abnsSoFar.indexOf(value.abn);
+    if (index !== -1) {
+      //TODO:(sean) Logging
+      duplicateindex.push(i);
+      arr[index].grossPayments = addStrings(arr[index].grossPayments, arr[i].grossPayments);
+      arr[index].gst = addStrings(arr[index].grossPayments, arr[i].gst);
+      arr[index].taxWithheld = addStrings(arr[index].taxWithheld, arr[i].taxWithheld);
+        
+    }
+    valuesSoFar.push(value);
+    abnsSoFar.push(value.abn);
+  }
 
-  //arr = removeDuplicates(arr);
+  var x = valuesSoFar.filter((item, index) => 
+    !duplicateindex.includes(index)
+  );
+
+  return x;
+}
+
+
+function formatupload(original) {
+
+  arr = removeDuplicates(original);
 
   for (var i in arr) {
     arr[i].businessName = replaceAll(arr[i].businessName,"&","and")
@@ -173,30 +191,8 @@ function replaceAll(str, find, replace) {
 
 function formatjpresults(arr) {
 
-      //BN: "70154805660"
-      //AddressType: "B"
-      //Amendment: ""
-      //BankStateBranchNumber: ""
-      //BusinessPaymentGrossAmount: "2926.95"
-      //CountryCode: "AU"
-      //FamilyName: ""
-      //FinancialInstitutionAccountNumber: ""
-      //GivenName: ""
-      //GoodsAndServicesTaxLiabilityAmount: "225.70"
-      //IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount: ""
-      //Line1: "Level 3"
-      //Line2: "97 Pirie St"
-      //LocalityName: "ADELAIDE"
-      //OrganisationalName: "1878 Elix Lawyers Pty Limited"
-      //OrganisationalNameType: "MN"
-      //Postcode: "5000"
-      //StateOrTerritory: "SA"
-      //TelephoneAreaCode: ""
-      //TelephoneNumber: ""
-      //Title: ""
-  //
   //contractors = [];
-  contractors = arr.map(line => ({
+  ctrs = arr.map(line => ({
       businessName: line.OrganisationalName,
       name: line.GivenName.split(' ').slice(0, -1).join(' '),
       tradingName: "",
@@ -208,12 +204,12 @@ function formatjpresults(arr) {
       suburb: line.LocalityName,
       state: line.StateOrTerritory,
       postcode: line.Postcode,
-      taxWithheld: stripCents(line.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount),
-      grossPayments: stripCents(line.BusinessPaymentGrossAmount),
-      gst: stripCents(line.GoodsAndServicesTaxLiabilityAmount),
+      taxWithheld: ((line.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount) ? stripCents(line.IncomeTaxPayAsYouGoWithholdingTaxWithheldAmount) : "0"),
+      grossPayments: ((line.BusinessPaymentGrossAmount) ? stripCents(line.BusinessPaymentGrossAmount) : "0"),
+      gst: ((line.GoodsAndServicesTaxLiabilityAmount) ? stripCents(line.GoodsAndServicesTaxLiabilityAmount) : "0"),
       amendment: ((line.Amendment) ? "A":"O")
   }));
-  return contractors;
+  return ctrs;
 }
 
 $(function(){
@@ -287,6 +283,8 @@ function editContractor(index) {
     }
   }
   $("#contractorModal").modal() 
+  //$('#addContractor').validator()
+
 }
 function deleteContractor(index) {
   window.contractors.splice(index, 1);
@@ -664,7 +662,13 @@ function validateTPAR() {
     var errors = validate(window.contractors[i], contractorConstraints);
     if (errors) {
       window.contractorErrors.push(errors)
-      window.errorNames.push(window.contractors[i].abn);
+      if (window.contractors[i].abn) {
+        window.errorNames.push(window.contractors[i].abn);
+      } else if (window.contractors[i].businessName) {
+        window.errorNames.push(window.contractors[i].businessName);
+      } else {
+        window.errorNames.push(window.contractors[i].surname);
+      }
     }
   }
 
@@ -751,8 +755,10 @@ function openfile() {
   } else {
     createbutton.disabled = true
     createbutton.onclick = function(){};
-    reportbutton.disabled = true
-    reportbutton.onclick = function(){};
+    //reportbutton.disabled = true
+    //reportbutton.onclick = function(){};
+    databutton.disabled = true
+    databutton.onclick = function(){};
   }
 }
 
