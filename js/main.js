@@ -13,7 +13,6 @@ function handleFiles(event) {
   });
 }
 
-//TODO:(Sean)
 function handlejpFiles(event) {
 
   var file = event.target.files[0];
@@ -45,7 +44,10 @@ function removeDuplicates(arr) {
     var value = arr[i];
     var index = abnsSoFar.indexOf(value.abn);
     if (index !== -1) {
-      //TODO:(sean) Logging
+      window.loggingstring += "Merging Duplicate Contractor: " + value.abn + " - " + value.businessName + " " + value.name + "\n";
+      window.loggingstring += "Gross Payments: " + arr[index].grossPayments + " + " + arr[i].grossPayments + " = " + addStrings(arr[index].grossPayments, arr[i].grossPayments) + "\n";
+      window.loggingstring += "GST: " + arr[index].gst + " + " + arr[i].gst + " = " + addStrings(arr[index].gst, arr[i].gst) + "\n";
+      window.loggingstring += "Tax Withheld: " + arr[index].taxWithheld + " + " + arr[i].taxWithheld + " = " + addStrings(arr[index].taxWithheld , arr[i].taxWithheld ) + "\n\n";
       duplicateindex.push(i);
       arr[index].grossPayments = addStrings(arr[index].grossPayments, arr[i].grossPayments);
       arr[index].gst = addStrings(arr[index].grossPayments, arr[i].gst);
@@ -318,6 +320,8 @@ function toTitleCase(str)
 
 function validateTPAR() {
   window.valid = true;
+  window.loggingfile = window.loggingstring;
+  window.loggingfile += "Validator: \n\n";
   numb = ['ABN']
   for (var key in window.payer) {
       if(window.payer[key].trim)
@@ -662,13 +666,17 @@ function validateTPAR() {
     var errors = validate(window.contractors[i], contractorConstraints);
     if (errors) {
       window.contractorErrors.push(errors)
+      var errorName = ""
       if (window.contractors[i].abn) {
-        window.errorNames.push(window.contractors[i].abn);
-      } else if (window.contractors[i].businessName) {
-        window.errorNames.push(window.contractors[i].businessName);
+        errorName += window.contractors[i].abn + " - ";
+      } 
+      if (window.contractors[i].businessName) {
+        errorName += window.contractors[i].businessName;
       } else {
-        window.errorNames.push(window.contractors[i].surname);
+        errorName += window.contractors[i].surname;
       }
+
+      window.errorNames.push(errorName);
     }
   }
 
@@ -680,17 +688,20 @@ function validateTPAR() {
     var p = document.createElement("p")                
     p.style.color = "red";
     var content = document.createTextNode("---ERRORS WITH PAYER DATA ---");
+    window.loggingfile += "---ERRORS WITH PAYER DATA ---\n\n";
     p.appendChild(content);
     var br = document.createElement("br");
     p.appendChild(br);
     for (var property in payerErrors) {
       var content = document.createTextNode(property + ":");
+      window.loggingfile += property + ":\n";
       var br = document.createElement("br");
       p.appendChild(br);
       p.appendChild(content);
       for (var i in payerErrors[property]) {
         var content = document.createTextNode(i +":" + payerErrors[property][i]);
-    var br = document.createElement("br");
+        window.loggingfile += i +":" + payerErrors[property][i] + "\n";
+        var br = document.createElement("br");
         p.appendChild(br);
         p.appendChild(content);
       }
@@ -700,8 +711,9 @@ function validateTPAR() {
     var p = document.createElement("p")                
     p.style.color = "green";
     var content = document.createTextNode("---PAYER DATA VALID---");
-    var br = document.createElement("br");
+    window.loggingfile +="---PAYER DATA VALID---"+"\n"
     p.appendChild(content);
+    var br = document.createElement("br");
     p.appendChild(br);
     div.appendChild(p);
   }
@@ -710,21 +722,25 @@ function validateTPAR() {
     var p = document.createElement("p")                
     p.style.color = "red";
     var content = document.createTextNode("---ERRORS WITH CONTRACTOR DATA ---");
+    window.loggingfile +="---ERRORS WITH CONTRACTOR DATA ---"+"\n"
     var br = document.createElement("br");
     p.appendChild(br);
     p.appendChild(content);
     for (var i in window.contractorErrors) {
       var content = document.createTextNode("---CONTRACTOR: " + window.errorNames[i] + " ---");
+      window.loggingfile +="---CONTRACTOR: " + window.errorNames[i] + " ---"+"\n"
       var br = document.createElement("br");
       p.appendChild(br);
       p.appendChild(content);
       for (var property in window.contractorErrors[i]) {
         var content = document.createTextNode(property + ":");
+        window.loggingfile +=property + ":"+"\n"
         var br = document.createElement("br");
         p.appendChild(br);
         p.appendChild(content);
         for (var j in window.contractorErrors[i][property]) {
           var content = document.createTextNode(window.contractorErrors[i][property][j]);
+          window.loggingfile +=window.contractorErrors[i][property][j]+"\n"
           var br = document.createElement("br");
           p.appendChild(br);
           p.appendChild(content);
@@ -736,6 +752,7 @@ function validateTPAR() {
     var p = document.createElement("p")                
     p.style.color = "green";
     var content = document.createTextNode("---CONTRACTOR DATA VALID---");
+    window.loggingfile +="---CONTRACTOR DATA VALID---"+"\n"
     var br = document.createElement("br");
     p.appendChild(br);
     p.appendChild(content);
@@ -791,6 +808,10 @@ function makeJSON() {
   window.JSONFile = {Payer: window.payer, Contractors: window.contractors };
   var text = JSON.stringify(window.JSONFile, null, '\t');
   download("TPARData.txt", text);
+}
+
+function makeLog() {
+  download("Logfile.txt", window.loggingfile);
 }
 
 function addSupplierDataRecords() {
@@ -1139,6 +1160,9 @@ function main() {
 		//tableCreate();
     //openvalidate();
   window.now = moment();
+  window.loggingstring = "TaxablePayments.com.au - Log File\nDate: ";
+  window.loggingstring += window.now.format('MMMM Do YYYY, h:mm:ss a'); // June 18th 2020, 1:30:48 pm
+  window.loggingstring += "\n---------------------------------\n\n";
   if (window.now.month() < 6) {
     window.now.set('year', now.year() -1);
   }
