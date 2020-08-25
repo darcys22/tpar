@@ -20,6 +20,10 @@ function handlejpFiles(event) {
   Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
+      transformHeader: function (header) {
+        console.log(header);
+        return header.replace(/\s/g,'');
+      },
       complete: function (results) {
         window.contractors.push.apply(window.contractors,formatupload(formatjpresults(results.data)));
         tableCreate();
@@ -309,7 +313,8 @@ function stripCents(str) {
     if (str.indexOf('.') !== -1) {
       str = str.substring(0, str.indexOf('.'));
     }
-    return str.replace(/[^0-9,]|,[0-9]*$/,''); 
+    //return str.replace(/[^0-9,]|,[0-9]*$/,''); 
+    return str.replace("/[^\d]/",""); 
   }
 }
 
